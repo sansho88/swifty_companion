@@ -4,16 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_42"
     tools:context=".MainActivity">
 
     <TextView
         android:id="@+id/user_login_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:text="LOGIN"
+        android:textSize="52dp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/user_avatar"
+        app:layout_constraintEnd_toEndOf="@id/search_user_searchView"
+
         app:layout_constraintStart_toStartOf="@id/search_user_searchView"
         app:layout_constraintTop_toBottomOf="@id/search_user_searchView"
         app:layout_constraintVertical_bias="0.134" />
@@ -22,12 +25,27 @@
         android:id="@+id/user_fullName_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="FullName"
+        android:text="FullName FullyFullo"
+        android:textSize="24dp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/search_user_searchView"
+        app:layout_constraintStart_toStartOf="@id/search_user_searchView"
+        app:layout_constraintTop_toBottomOf="@id/user_avatar"
+        app:layout_constraintVertical_bias="0.02" />
+
+    <TextView
+        android:id="@+id/user_level_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Level"
+        android:textSize="20dp"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@id/user_login_text"
-        app:layout_constraintTop_toBottomOf="@id/user_login_text"
+        app:layout_constraintStart_toStartOf="@id/search_user_searchView"
+        app:layout_constraintTop_toBottomOf="@id/user_fullName_text"
         app:layout_constraintVertical_bias="0.02" />
 
     <TextView
@@ -35,23 +53,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Grade"
+        android:textSize="20dp"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@id/user_fullName_text"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toEndOf="@id/user_level_text"
         app:layout_constraintTop_toBottomOf="@id/user_fullName_text"
         app:layout_constraintVertical_bias="0.02" />
+
 
     <TextView
         android:id="@+id/user_evalPoints_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Evaluations Points"
+        android:textSize="20dp"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@id/user_grade_text"
-        app:layout_constraintTop_toBottomOf="@id/user_grade_text"
+        app:layout_constraintStart_toStartOf="@id/user_level_text"
+        app:layout_constraintTop_toBottomOf="@id/exp_progressBar"
         app:layout_constraintVertical_bias="0.02" />
 
     <TextView
@@ -59,6 +82,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="z42r42p42"
+        android:textSize="20dp"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -70,17 +95,35 @@
         android:id="@+id/search_user_searchView"
         android:layout_width="200dp"
         android:layout_height="50dp"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="10dp"
+        />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="68dp"
-        android:layout_height="72dp"
-        android:layout_marginTop="36dp"
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/user_avatar"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@id/search_user_searchView"
         app:layout_constraintEnd_toEndOf="@+id/search_user_searchView"
-        app:layout_constraintTop_toBottomOf="@+id/search_user_searchView"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:layout_constraintTop_toBottomOf="@+id/user_login_text"
+        tools:srcCompat="@tools:sample/avatars"
+        android:src="@drawable/cat"
+        app:shapeAppearance="@style/RoundedSquare"
+        android:scaleType="centerCrop"
+        android:contentDescription="TODO" />
+
+    <ProgressBar
+        android:id="@+id/exp_progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/user_level_text"
+        app:layout_constraintTop_toBottomOf="@id/user_level_text"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
