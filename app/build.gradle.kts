@@ -51,6 +51,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     implementation("com.google.android.gms:play-services-cronet:18.0.1")
     implementation("com.google.code.gson:gson:2.10")
+    implementation("com.github.kittinunf.fuel:fuel:2.3.1")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

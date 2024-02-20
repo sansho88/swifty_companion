@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.JsonWriter
 import android.util.Log
 import com.google.gson.Gson
+import fr.tgriffit.swifty_companion.data.auth.ApiService
 import fr.tgriffit.swifty_companion.data.model.WeatherOfDay
 import org.chromium.net.CronetEngine
 import org.chromium.net.CronetException
@@ -26,16 +27,16 @@ class MainActivity : AppCompatActivity() {
         val myBuilder = CronetEngine.Builder(this.baseContext)
         val cronetEngine: CronetEngine = myBuilder.build()
         val executor: Executor = Executors.newSingleThreadExecutor()
-
-        val requestBuilder = cronetEngine.newUrlRequestBuilder(
-            "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41"/* +
-                    "&hourly=temperature_2m"*/,
+        ApiService()
+       /* val requestBuilder = cronetEngine.newUrlRequestBuilder(
+            "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41"*//* +
+                    "&hourly=temperature_2m"*//*,
             MyUrlRequestCallback(),
             executor
         )
 
         val request: UrlRequest = requestBuilder.build()
-        request.start()
+        request.start()*/
 
 
     }
