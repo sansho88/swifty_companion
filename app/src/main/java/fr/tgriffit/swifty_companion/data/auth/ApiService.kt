@@ -1,14 +1,19 @@
 package fr.tgriffit.swifty_companion.data.auth
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.util.Log
+import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.extensions.authentication
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
 import com.google.gson.Gson
 import io.github.cdimascio.dotenv.dotenv
+import java.io.BufferedOutputStream
 import java.lang.Exception
+import java.net.HttpURLConnection
+import java.net.URL
 
 
 /**
@@ -47,11 +52,23 @@ class ApiService {
     }
     private fun setAuthToken() {
         try {
+            val credentials = mapOf<String, String>(
+                Pair<String, String>("client_id", clientId),
+                Pair<String, String>("client_secret", clientSecret)
+            )
+
             val (request, response, result) = apigeeTokenUrl.httpPost(listOf(
                 "grant_type" to grantType,
+                "client_id" to clientId,
+                "client_secret" to clientSecret
             ))
-                .authentication().basic(clientId, clientSecret)
-                .responseString()
+                .responseString() /** fixme :
+            "Response => <-- -1 https://api.intra.42.fr/oauth/token
+            Response :
+            Length : 0
+            Body : (empty)
+            Headers : (0)" */
+
 
             when (result) {
                 is Result.Success -> {
@@ -59,15 +76,16 @@ class ApiService {
                     val tokenResultJson = gson.fromJson(result.value, AuthResult::class.java)
                     token = tokenResultJson!!.accessToken!!
                     tokenType = tokenResultJson.tokenType!!
-                    Log.d(ContentValues.TAG, "token $token")
-                    Log.d(ContentValues.TAG, "token type $tokenType")
+                    Log.d(TAG, "token $token")
+                    Log.d(TAG, "token type $tokenType")
                 }
                 is Result.Failure -> {
                     // handle error
-                    Log.e(ContentValues.TAG, "setAuthToken: FAILED:\n" +
+                    Log.e(TAG, "setAuthToken: FAILED:\n" +
                             "UID=$clientId\n" +
                             "SECRET=$clientSecret\n" +
-                            "$result", )
+                            "request => $request" +
+                            "\n Response => $response", )
                 }
             }
 
