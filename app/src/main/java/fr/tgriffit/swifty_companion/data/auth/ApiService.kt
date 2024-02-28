@@ -104,7 +104,8 @@ class ApiService {
     init {
         executor.execute {
             setAuthToken()
-            callApi("https://api.intra.42.fr/v2/cursus", tokenType, token)
+            callApi("https://api.intra.42.fr/v2/users", tokenType, token)
+            //callApi("https://api.intra.42.fr/v2/me", tokenType, token) //todo: oauth42 pour pouvoir la faire! (https://api.intra.42.fr/apidoc/guides/web_application_flow)
         }
     }
 }
