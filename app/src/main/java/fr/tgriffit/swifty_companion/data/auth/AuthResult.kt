@@ -1,9 +1,12 @@
 package fr.tgriffit.swifty_companion.data.auth
 
+/**
+ * Names SHOULD follow snake_case typo for Gson parsing
+ */
 data class AuthResult(
-    var accessToken: String? = null,
-    var tokenType: String? = null,
-    var expiresIn: Number,
+    var access_token: String = "null",
+    var token_type: String = "bearer",
+    var expires_in: Number,
     var scope: String = "Public",
-    var createdAt : Int = 0
+    var created_at : Int = 0
     )

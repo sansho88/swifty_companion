@@ -11,8 +11,8 @@
         android:id="@+id/user_login_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="LOGIN"
-        android:textSize="52dp"
+        android:text="@string/user_login_text"
+        android:textSize="52sp"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@id/user_avatar"
         app:layout_constraintEnd_toEndOf="@id/search_user_searchView"
@@ -25,8 +25,8 @@
         android:id="@+id/user_fullName_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="FullName FullyFullo"
-        android:textSize="24dp"
+        android:text="@string/user_fullname_text"
+        android:textSize="24sp"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/search_user_searchView"
@@ -38,8 +38,8 @@
         android:id="@+id/user_level_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="42.42%"
-        android:textSize="20dp"
+        android:text="@string/level_percent"
+        android:textSize="20sp"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -52,8 +52,8 @@
         android:id="@+id/user_grade_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Grade"
-        android:textSize="20dp"
+        android:text="@string/grade"
+        android:textSize="20sp"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -67,8 +67,8 @@
         android:id="@+id/user_evalPoints_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="42 Points"
-        android:textSize="20dp"
+        android:text="@string/user_evalPoints_text"
+        android:textSize="20sp"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -81,8 +81,8 @@
         android:id="@+id/user_placeConnected_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="z42r42p42"
-        android:textSize="20dp"
+        android:text="@string/user_location_text"
+        android:textSize="20sp"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -91,7 +91,7 @@
         app:layout_constraintTop_toBottomOf="@id/user_evalPoints_text"
         app:layout_constraintVertical_bias="0.02" />
 
-    <SearchView
+    <androidx.appcompat.widget.SearchView
         android:id="@+id/search_user_searchView"
         android:layout_width="200dp"
         android:layout_height="50dp"
@@ -114,7 +114,8 @@
         android:src="@drawable/cat"
         app:shapeAppearance="@style/RoundedSquare"
         android:scaleType="centerCrop"
-        android:contentDescription="TODO" />
+        android:contentDescription="TODO"
+        />
 
     <ProgressBar
         android:id="@+id/exp_progressBar"
@@ -127,6 +128,10 @@
         android:progress="42"
         android:progressTint="@color/light_green"
         android:progressBackgroundTint="@color/dark_green"
+        android:progressBackgroundTintMode="src_over"
+
+
+
         />
 
 
