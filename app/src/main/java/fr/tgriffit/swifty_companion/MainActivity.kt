@@ -28,15 +28,17 @@ class MainActivity : AppCompatActivity() {
         val cronetEngine: CronetEngine = myBuilder.build()
         val executor: Executor = Executors.newSingleThreadExecutor()
         ApiService()
-       /* val requestBuilder = cronetEngine.newUrlRequestBuilder(
-            "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41"*//* +
-                    "&hourly=temperature_2m"*//*,
+        //todo: to comment
+        val requestBuilder = cronetEngine.newUrlRequestBuilder(
+            "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41" +
+                    "&hourly=temperature_2m",
             MyUrlRequestCallback(),
             executor
         )
 
         val request: UrlRequest = requestBuilder.build()
-        request.start()*/
+        request.start()
+        //todo  jusqu'ici
 
 
     }
