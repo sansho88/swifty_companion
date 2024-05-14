@@ -23,7 +23,6 @@ class MainActivity : AppCompatActivity() {
     /*lateinit var apiResponse : String*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
         val myBuilder = CronetEngine.Builder(this.baseContext)
         val cronetEngine: CronetEngine = myBuilder.build()
         val executor: Executor = Executors.newSingleThreadExecutor()
@@ -39,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         val request: UrlRequest = requestBuilder.build()
         request.start()
         //todo  jusqu'ici
+        setContentView(R.layout.activity_main)
 
 
     }

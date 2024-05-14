@@ -5,35 +5,42 @@ import android.content.ContentValues.TAG
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.webkit.WebView
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
 import com.google.gson.Gson
 import io.github.cdimascio.dotenv.dotenv
 import java.lang.Exception
+import java.net.URLEncoder
+import java.util.Base64.Encoder
 import java.util.UUID
 import java.util.concurrent.Executors
+import kotlin.io.encoding.Base64
 
 
-/**
- * https://hirukarunathilaka.medium.com/token-based-authentication-rest-api-implementation-for-android-kotlin-apps-d2109b18eb36
- * https://api.intra.42.fr/apidoc/guides/getting_started
- */
-class ApiService {
+open class AuthParams {
     private val dotenv = dotenv{ //path to .env file: app/src/main/assets/env
         directory = "/assets"
         filename = "env" // instead of '.env', use 'env'
         ignoreIfMissing = true
     }
-    private val clientId = dotenv["UID"] //add your client id
-    private val clientSecret = dotenv["SECRET"] //add your client secret
-    private val redirectUri = "swifty://callback" //add your redirect uri ( https://www.oauth.com/oauth2-servers/redirect-uris/redirect-uris-native-apps/ )
-    private val scope = "public"
-    private var state = "12345"
-    private val responseType = "code"
-    private val getAccess42ApiUrl = "https://api.intra.42.fr/oauth/authorize"
-    private val apigeeTokenUrl = "https://api.intra.42.fr/oauth/token" // url to get the token
-    private val grantType = "client_credentials"
+    protected val clientId = dotenv["UID"] //add your client id
+    protected val clientSecret = dotenv["SECRET"] //add your client secret
+    protected val redirectUri = "myapp://callback" //URLEncoder.encode("http://localhost:4242/", "UTF-8") //add your redirect uri ( https://www.oauth.com/oauth2-servers/redirect-uris/redirect-uris-native-apps/ )
+    protected val scope = "public"
+    protected var state = "12345"
+    protected val responseType = "code"
+    protected val getAccess42ApiUrl = "https://api.intra.42.fr/oauth/authorize"
+    protected val apigeeTokenUrl = "https://api.intra.42.fr/oauth/token" // url to get the token
+    protected val grantType = "client_credentials"
+}
+
+/**
+ * https://hirukarunathilaka.medium.com/token-based-authentication-rest-api-implementation-for-android-kotlin-apps-d2109b18eb36
+ * https://api.intra.42.fr/apidoc/guides/getting_started
+ */
+class ApiService : AuthParams() {
 
     private var token: String = "null"
     private var tokenType: String = "null"
@@ -78,7 +85,7 @@ class ApiService {
                     is Result.Success -> {
                         var gson = Gson()
                         val tokenResultJson = gson.fromJson(result.value, AuthResult::class.java)
-                        Log.d(TAG, "[SUCCESS] setAuthToken:\n" +
+                        Log.d(TAG, "[SUCCESS] setPublicAuthToken:\n" +
                                 "RESULT VALUUUUE:\n${result.value}")
                         token = tokenResultJson.access_token
                         tokenType = tokenResultJson.token_type
@@ -108,7 +115,7 @@ class ApiService {
 
     }
 
-    private fun request42AccessToUser(){
+    fun request42AccessToUser(): String {
 
         val authorizationUrl = "https://api.intra.42.fr/oauth/authorize?" +
                 "client_id=$clientId&" +
@@ -131,6 +138,8 @@ class ApiService {
                 is Result.Success -> {
                    Log.d(TAG, "[SUCCESS] request42AccessToUser:\n" +
                            "Ask for access page:${result.value}")
+                    return result.value
+
                 }
 
                 is Result.Failure -> {
@@ -146,20 +155,22 @@ class ApiService {
                                 "SECRET=$clientSecret\n" +
                                 "request => $request" +
                                 "\n Response => $response", )
+                    return result.error.message.toString()
                 }
             }
 
         }catch (e: Exception){
             e.printStackTrace()
         }
+        return ""
     }
 
 
     init {
         executor.execute {
             setPublicAuthToken()
-            request42AccessToUser()
-            callApi("https://api.intra.42.fr/v2/users", tokenType, token)
+            // request42AccessToUser()
+             /*callApi("https://api.intra.42.fr/v2/users", tokenType, token)*/
             //callApi("https://api.intra.42.fr/v2/me", tokenType, token) //todo: oauth42 pour pouvoir la faire! (https://api.intra.42.fr/apidoc/guides/web_application_flow)
         }
     }
