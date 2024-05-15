@@ -55,7 +55,8 @@ dependencies {
     implementation("com.github.kittinunf.fuel:fuel:2.3.1")
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
     implementation("com.squareup.okhttp3:mockwebserver:4.12.0")
-    // implementation("com.github.Cidaas:cidaas-android-sdk:cidaas:3.0.8") #OUTDATED
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

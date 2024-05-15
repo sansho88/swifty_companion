@@ -1,11 +1,12 @@
 package fr.tgriffit.swifty_companion
 
 import android.content.ContentValues.TAG
-import android.content.Intent
-import android.nfc.Tag
+
 import android.os.Bundle
 import android.util.Log
+
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import fr.tgriffit.swifty_companion.data.auth.ApiService
@@ -16,28 +17,52 @@ class LoginActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         val loginButton : Button = findViewById(R.id.login_btn)
-
+        val connexionPage : WebView = findViewById(R.id.login_webView)
         val executor = Executors.newSingleThreadExecutor() //for API calls!
-        ApiService()
-        loginButton.setOnClickListener {
+        //connexionPage.settings.javaScriptEnabled = true
+        //connexionPage.visibility = View.INVISIBLE
 
-            try {
-                executor.execute {
-                    val connexionPage : WebView = findViewById(R.id.login_webView)
-                    runOnUiThread {
+
+        try {
+            executor.execute {
+//                    loginButton.visibility = View.INVISIBLE
+                // connexionPage.visibility = View.VISIBLE
+
+                runOnUiThread {
+                    ApiService().request42AccessToUser{result ->
                         connexionPage.loadData(
-                            ApiService().request42AccessToUser(),
+                            result,
                             "text/html",
                             "UTF-8"
                         )
                     }
-                   /* val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)*/
+
+
+
                 }
+                /* val intent = Intent(this, MainActivity::class.java)
+                 startActivity(intent)*/
             }
-            catch (exception: Exception){
-                Log.e(TAG, "[API ERROR] Something with the API process had a malfunction")
+        }
+        catch (exception: Exception){
+            Log.e(TAG, "[API ERROR] Something with the API process had a malfunction")
+        }
+
+      /*  connexionPage.webViewClient = object : WebViewClient() {
+
+            override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
+                handler.proceed()
             }
+
+        }
+        connexionPage.settings.domStorageEnabled = true
+        connexionPage.settings.javaScriptCanOpenWindowsAutomatically = true*/
+
+
+        ApiService()
+        loginButton.setOnClickListener {
+           /* loginButton.visibility = View.INVISIBLE
+            connexionPage.visibility = View.VISIBLE*/
 
         }
 
