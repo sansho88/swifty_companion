@@ -12,12 +12,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Swifty_companion"
+        android:launchMode="singleTop"
         tools:targetApi="31">
         <activity android:name=".LoginActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Accepts URIs that begin with "https://www.example.com/gizmos” -->
+
+                <data android:scheme="myapp"
+
+                    android:pathPrefix="/callback" />
+
+                <!-- note that the leading "/" is required for pathPrefix-->
             </intent-filter>
 
         </activity>
@@ -25,9 +37,9 @@
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+
             </intent-filter>
         </activity>
     </application>

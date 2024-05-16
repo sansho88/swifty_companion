@@ -23,7 +23,7 @@ class LoginActivity: AppCompatActivity() {
         setContentView(R.layout.activity_login)
         val loginButton : Button = findViewById(R.id.login_btn)
         val authParams = AuthParams()
-        val connexionPage : WebView = findViewById(R.id.login_webView)
+       // val connexionPage : WebView = findViewById(R.id.login_webView)
         val executor = Executors.newSingleThreadExecutor() //for API calls!
         val authorizationUrl = "https://api.intra.42.fr/oauth/authorize?" +
                 "client_id=${authParams.clientId}&" +
@@ -34,9 +34,12 @@ class LoginActivity: AppCompatActivity() {
 
 
         try {
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(authorizationUrl))
-            startActivity(browserIntent)
-            //todo: https://www.branch.io/resources/blog/how-to-open-an-android-app-from-the-browser/
+            loginButton.setOnClickListener {
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(authorizationUrl))
+                startActivity(browserIntent)
+                //todo: https://www.branch.io/resources/blog/how-to-open-an-android-app-from-the-browser/
+            }
+
             /*executor.execute {
 //                    loginButton.visibility = View.INVISIBLE
                 // connexionPage.visibility = View.VISIBLE
@@ -70,14 +73,6 @@ class LoginActivity: AppCompatActivity() {
         }
         connexionPage.settings.domStorageEnabled = true
         connexionPage.settings.javaScriptCanOpenWindowsAutomatically = true*/
-
-
-        ApiService()
-        loginButton.setOnClickListener {
-           /* loginButton.visibility = View.INVISIBLE
-            connexionPage.visibility = View.VISIBLE*/
-
-        }
 
 
     }
