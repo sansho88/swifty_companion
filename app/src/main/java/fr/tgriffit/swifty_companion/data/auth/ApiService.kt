@@ -23,15 +23,16 @@ import kotlinx.coroutines.withContext
 
 
 open class AuthParams {
+
     private val dotenv = dotenv { //path to .env file: app/src/main/assets/env
         directory = "/assets"
         filename = "env" // instead of '.env', use 'env'
         ignoreIfMissing = true
     }
-    protected val clientId = dotenv["UID"] //add your client id
+    val clientId: String = dotenv["UID"] //add your client id
     protected val clientSecret = dotenv["SECRET"] //add your client secret
 
-    protected val redirectUri =
+    val redirectUri =
         "myapp://callback/"//add your redirect uri ( https://www.oauth.com/oauth2-servers/redirect-uris/redirect-uris-native-apps/ )
     protected val scope = "public"
     protected var state = "12345"
@@ -41,6 +42,8 @@ open class AuthParams {
     protected val grantType = "client_credentials"
 
     protected val googleUrl = "https://www.google.fr/" //for testing
+
+
 }
 
 /**
