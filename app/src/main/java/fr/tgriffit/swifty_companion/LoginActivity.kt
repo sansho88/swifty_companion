@@ -10,6 +10,7 @@ import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import clientId
 import fr.tgriffit.swifty_companion.data.auth.ApiService
@@ -18,8 +19,26 @@ import redirectUri
 import java.util.concurrent.Executors
 
 class LoginActivity: AppCompatActivity() {
+    var TAG = "LOGIN_ACTIVITY"
+
+    val register = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+
+        Log.d(TAG, "=====IT =>\n${result.resultCode}")
+        if (result.resultCode == RESULT_OK) {
+            Log.d(TAG, "=====\nonCreate: RESULT_OK\n========")
+            val intent = result.data
+            val code = intent?.getStringExtra("code")
+            val token = intent?.getStringExtra("token")
+            val error = intent?.getStringExtra("error")
+            if (code != null)
+                Log.d(TAG, "onCreate: code = $code")
+
+        }
+
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_login)
         val loginButton : Button = findViewById(R.id.login_btn)
         val authParams = AuthParams()
@@ -31,13 +50,30 @@ class LoginActivity: AppCompatActivity() {
                 "response_type=code"
         //connexionPage.settings.javaScriptEnabled = true
         //connexionPage.visibility = View.INVISIBLE
+        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(authorizationUrl))
+        val action = browserIntent.action
+        val data = browserIntent.data
+
 
 
         try {
             loginButton.setOnClickListener {
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(authorizationUrl))
-                startActivity(browserIntent)
+                TAG += ": Login Button"
+
+                if (browserIntent.resolveActivity(packageManager) != null) {
+                    register.launch(browserIntent)
+                } else {
+                    Log.d(TAG, "Aucune application pour gérer cet intent")
+                }
+
+
+
+                //startActivityForResult(browserIntent, 5)
                 //todo: https://www.branch.io/resources/blog/how-to-open-an-android-app-from-the-browser/
+                // voir Grand Point 2 (tres interessant imo)
+                Log.d(TAG, "onCreate: data = ${data.toString()}" +
+                        "\n action = ${action.toString()}")
+
             }
 
             /*executor.execute {

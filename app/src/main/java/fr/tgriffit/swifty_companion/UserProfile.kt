@@ -2,7 +2,6 @@ package fr.tgriffit.swifty_companion
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.JsonWriter
 import android.util.Log
 import com.google.gson.Gson
 import fr.tgriffit.swifty_companion.data.auth.ApiService
@@ -11,14 +10,11 @@ import org.chromium.net.CronetEngine
 import org.chromium.net.CronetException
 import org.chromium.net.UrlRequest
 import org.chromium.net.UrlResponseInfo
-import org.json.JSONObject
-import org.json.JSONTokener
-import java.io.File
 import java.nio.ByteBuffer
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-class MainActivity : AppCompatActivity() {
+class UserProfile : AppCompatActivity() {
 
     /*lateinit var apiResponse : String*/
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         val request: UrlRequest = requestBuilder.build()
         request.start()
         //todo  jusqu'ici
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.user_profile)
 
 
     }
