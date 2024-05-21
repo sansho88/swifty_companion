@@ -1,12 +1,9 @@
 package fr.tgriffit.swifty_companion.data.auth
 
 import android.content.ContentValues
-import android.content.ContentValues.TAG
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.Method
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
@@ -38,7 +35,7 @@ open class AuthParams {
     protected var state = "12345"
     protected val responseType = "code"
     protected val getAccess42ApiUrl = "https://api.intra.42.fr/oauth/authorize"
-    protected val apigeeTokenUrl = "https://api.intra.42.fr/oauth/token" // url to get the token
+    protected val get42TokenUrl = "https://api.intra.42.fr/oauth/token" // url to get the token
     protected val grantType = "client_credentials"
 
     protected val googleUrl = "https://www.google.fr/" //for testing
@@ -82,6 +79,35 @@ class ApiService : AuthParams() {
 
     }
 
+    fun exchangeCodeForToken42(code: String) : Token? {
+        val (request, response, result) = get42TokenUrl.httpPost(
+            listOf(
+                "grant_type" to grantType,
+                "client_id" to clientId,
+                "client_secret" to clientSecret,
+                "code" to code,
+            )
+        ).responseString()
+
+        val parser = Gson()
+
+
+
+        when (result){
+            is Result.Success -> {
+                Log.d(ContentValues.TAG, "Success  ${result.value}")
+
+                return parser.fromJson<Token>(result.value, Token::class.java)
+            }
+
+            is Result.Failure -> {
+                Log.e(ContentValues.TAG, "Impossible to get token from 42 with the code given")
+                return null
+            }
+
+        }
+    }
+
     private fun setPublicAuthToken() {
 
         try {
@@ -90,7 +116,7 @@ class ApiService : AuthParams() {
                 Pair<String, String>("client_secret", clientSecret)
             )
 
-            val (request, response, result) = apigeeTokenUrl.httpPost(
+            val (request, response, result) = get42TokenUrl.httpPost(
                 listOf(
                     "grant_type" to grantType,
                     "client_id" to clientId,
@@ -213,12 +239,12 @@ class ApiService : AuthParams() {
     }
 
 
-    init {
+    /*init {
         executor.execute {
             setPublicAuthToken()
             request42AccessToUser { result -> Log.d(ContentValues.TAG, "Result: $result") }
-            /*callApi("https://api.intra.42.fr/v2/users", tokenType, token)*/
+            *//*callApi("https://api.intra.42.fr/v2/users", tokenType, token)*//*
             //callApi("https://api.intra.42.fr/v2/me", tokenType, token) //todo: oauth42 pour pouvoir la faire! (https://api.intra.42.fr/apidoc/guides/web_application_flow)
         }
-    }
+    }*/
 }

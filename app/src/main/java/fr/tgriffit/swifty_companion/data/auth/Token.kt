@@ -9,4 +9,12 @@ data class Token(
     var expires_in: Number,
     var scope: String = "Public",
     var created_at : Int = 0
-    )
+    ){
+    override fun toString(): String {
+        return "Token(access_token='$access_token', \n" +
+                "token_type='$token_type', \n" +
+                "expires_in=$expires_in, \n" +
+                "scope='$scope', \n" +
+                "created_at=$created_at)"
+    }
+}

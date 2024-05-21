@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import fr.tgriffit.swifty_companion.data.auth.ApiService
 import fr.tgriffit.swifty_companion.data.auth.AuthParams
+import fr.tgriffit.swifty_companion.data.auth.Token
 import java.util.concurrent.Executors
 
 class LoginActivity: AppCompatActivity() {
@@ -18,8 +20,8 @@ class LoginActivity: AppCompatActivity() {
             "response_type=code"
 
     private val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(authorizationUrl))
-    private var code : String? = "4242"
-    private var token : String? = "XXXXX"
+    private var code : String? = ""
+    private var token : Token? = null
     private var error : String? = ""
 
 
@@ -27,13 +29,22 @@ class LoginActivity: AppCompatActivity() {
         super.onResume()
         handleAuthRedirect(intent)
         Log.d(TAG, "onResume: code = $code")
+
+        if (!code.isNullOrEmpty()) {
+            val executor = Executors.newSingleThreadExecutor() //for API calls!
+            executor.execute {
+                token = ApiService().exchangeCodeForToken42(code!!)
+                Log.d(TAG, "onResume: token = $token")
+
+            }
+        }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_login)
         val loginButton : Button = findViewById(R.id.login_btn)
-        val executor = Executors.newSingleThreadExecutor() //for API calls!
+       // val executor = Executors.newSingleThreadExecutor() //for API calls!
 
         try {
             loginButton.setOnClickListener {
@@ -78,9 +89,19 @@ class LoginActivity: AppCompatActivity() {
                 // Échange le code d'autorisation contre un token ici
             } else if (error != null) {
                 Log.d(TAG, "Error during authorization: $error")
+                browserIntent.putExtra("error", error)
             }
-            else {}
+            else {
+                Log.e(TAG, "No authorization code or error found")
+            }
 
         }
+    }
+
+    private fun exchangeCodeForAccessToken(code: String){
+        if (code.isEmpty()){
+            throw Exception("Code is empty")
+        }
+
     }
 }
