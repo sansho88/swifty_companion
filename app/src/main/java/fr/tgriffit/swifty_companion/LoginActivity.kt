@@ -1,81 +1,51 @@
 package fr.tgriffit.swifty_companion
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
-
 import android.os.Bundle
 import android.util.Log
-
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.Button
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import clientId
-import fr.tgriffit.swifty_companion.data.auth.ApiService
 import fr.tgriffit.swifty_companion.data.auth.AuthParams
-import redirectUri
 import java.util.concurrent.Executors
 
 class LoginActivity: AppCompatActivity() {
-    var TAG = "LOGIN_ACTIVITY"
+    private var TAG = "LOGIN_ACTIVITY"
+    private val authParams = AuthParams()
+    private val authorizationUrl = "https://api.intra.42.fr/oauth/authorize?" +
+            "client_id=${authParams.clientId}&" +
+            "redirect_uri=${authParams.redirectUri}&" +
+            "response_type=code"
 
-    val register = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(authorizationUrl))
+    private var code : String? = "4242"
+    private var token : String? = "XXXXX"
+    private var error : String? = ""
 
-        Log.d(TAG, "=====IT =>\n${result.resultCode}")
-        if (result.resultCode == RESULT_OK) {
-            Log.d(TAG, "=====\nonCreate: RESULT_OK\n========")
-            val intent = result.data
-            val code = intent?.getStringExtra("code")
-            val token = intent?.getStringExtra("token")
-            val error = intent?.getStringExtra("error")
-            if (code != null)
-                Log.d(TAG, "onCreate: code = $code")
 
-        }
-
+    override fun onResume() {
+        super.onResume()
+        handleAuthRedirect(intent)
+        Log.d(TAG, "onResume: code = $code")
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_login)
         val loginButton : Button = findViewById(R.id.login_btn)
-        val authParams = AuthParams()
-       // val connexionPage : WebView = findViewById(R.id.login_webView)
         val executor = Executors.newSingleThreadExecutor() //for API calls!
-        val authorizationUrl = "https://api.intra.42.fr/oauth/authorize?" +
-                "client_id=${authParams.clientId}&" +
-                "redirect_uri=${authParams.redirectUri}&" +
-                "response_type=code"
-        //connexionPage.settings.javaScriptEnabled = true
-        //connexionPage.visibility = View.INVISIBLE
-        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(authorizationUrl))
-        val action = browserIntent.action
-        val data = browserIntent.data
-
-
 
         try {
             loginButton.setOnClickListener {
                 TAG += ": Login Button"
 
                 if (browserIntent.resolveActivity(packageManager) != null) {
-                    register.launch(browserIntent)
+                    startActivity(browserIntent)
                 } else {
                     Log.d(TAG, "Aucune application pour gérer cet intent")
                 }
 
-
-
-                //startActivityForResult(browserIntent, 5)
-                //todo: https://www.branch.io/resources/blog/how-to-open-an-android-app-from-the-browser/
-                // voir Grand Point 2 (tres interessant imo)
-                Log.d(TAG, "onCreate: data = ${data.toString()}" +
-                        "\n action = ${action.toString()}")
-
             }
-
             /*executor.execute {
 //                    loginButton.visibility = View.INVISIBLE
                 // connexionPage.visibility = View.VISIBLE
@@ -88,28 +58,29 @@ class LoginActivity: AppCompatActivity() {
                             "UTF-8"
                         )
                     }
-
-
-
                 }
-                *//* val intent = Intent(this, MainActivity::class.java)
-                 startActivity(intent)*//*
+
             }*/
         }
         catch (exception: Exception){
             Log.e(TAG, "[API ERROR] Something with the API process had a malfunction")
         }
+    }
+    private fun handleAuthRedirect(intent: Intent?) {
+        Log.d(TAG, "handleAuthRedirect")
+        intent?.data?.let { uri ->
+             code = uri.getQueryParameter("code")
+             error = uri.getQueryParameter("error")
+            if (code != null) {
+                Log.d(TAG, "Authorization code received: $code")
+                browserIntent.putExtra("code", code)
 
-      /*  connexionPage.webViewClient = object : WebViewClient() {
-
-            override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
-                handler.proceed()
+                // Échange le code d'autorisation contre un token ici
+            } else if (error != null) {
+                Log.d(TAG, "Error during authorization: $error")
             }
+            else {}
 
         }
-        connexionPage.settings.domStorageEnabled = true
-        connexionPage.settings.javaScriptCanOpenWindowsAutomatically = true*/
-
-
     }
 }

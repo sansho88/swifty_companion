@@ -31,9 +31,10 @@
 
                 <!-- Accepts URIs that begin with "https://www.example.com/gizmos” -->
 
-                <data android:scheme="myapp"
+               <!-- <data android:scheme="myapp"
 
-                    android:pathPrefix="/callback" />
+                    android:pathPrefix="/callback" />-->
+                <data android:scheme="myapp" android:host="callback" />
 
                 <!-- note that the leading "/" is required for pathPrefix-->
             </intent-filter>
