@@ -2,16 +2,17 @@ package fr.tgriffit.swifty_companion.data.auth
 
 import android.os.Parcel
 import android.os.Parcelable
-import android.util.Log
+import androidx.versionedparcelable.VersionedParcelize
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 /**
  * Names SHOULD follow snake_case typo for Gson parsing
  */
+@VersionedParcelize
 data class Token(
     var access_token: String = "null",
-    var token_type: String = "bearer",
+    var token_type: String = "Bearer",
     var expires_in: Number,
     var scope: String = "Public",
     var created_at : Int = 0
@@ -37,6 +38,7 @@ data class Token(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(access_token)
         parcel.writeString(token_type)
+        parcel.writeLong(expires_in.toLong())
         parcel.writeString(scope)
         parcel.writeInt(created_at)
     }

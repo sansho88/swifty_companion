@@ -1,0 +1,86 @@
+package fr.tgriffit.swifty_companion.data
+
+import fr.tgriffit.swifty_companion.data.model.Campus
+import fr.tgriffit.swifty_companion.data.model.CampusUser
+import fr.tgriffit.swifty_companion.data.model.CursusUser
+import fr.tgriffit.swifty_companion.data.model.ExpertisesUser
+import fr.tgriffit.swifty_companion.data.model.LanguagesUser
+import fr.tgriffit.swifty_companion.data.model.Patroned
+import fr.tgriffit.swifty_companion.data.model.UserData
+import fr.tgriffit.swifty_companion.data.model.Image
+
+class User(
+    id: Int,
+    email: String,
+    login: String,
+    firstName: String,
+    lastName: String,
+    usualFullName: String,
+    usualFirstName: String,
+    url: String,
+    phone: String?,
+    displayName: String,
+    kind: String,
+    image: Image,
+    staff: Boolean,
+    correctionPoint: Int,
+    poolMonth: String,
+    poolYear: String,
+    location: String?,
+    wallet: Int,
+    anonymizeDate: String,
+    dataErasureDate: String?,
+    alumni: Boolean,
+    active: Boolean,
+    groups: List<Any>,
+    cursusUsers: List<CursusUser>,
+    projectsUsers: List<Any>,
+    languagesUsers: List<LanguagesUser>,
+    achievements: List<Any>,
+    titles: List<Any>,
+    titlesUsers: List<Any>,
+    partnerships: List<Any>,
+    patroned: List<Patroned>,
+    patroning: List<Any>,
+    expertisesUsers: List<ExpertisesUser>,
+    roles: List<Any>,
+    campus: List<Campus>,
+    campusUsers: List<CampusUser>
+) : UserData(
+    id = id,
+    email = email,
+    login = login,
+    firstName = firstName,
+    lastName = lastName,
+    usualFullName = usualFullName,
+    usualFirstName = usualFirstName,
+    url = url,
+    phone = phone,
+    displayName = displayName,
+    kind = kind,
+    image = image,
+    staff = staff,
+    correctionPoint = correctionPoint,
+    poolMonth = poolMonth,
+    poolYear = poolYear,
+    location = location,
+    wallet = wallet,
+    anonymizeDate = anonymizeDate,
+    dataErasureDate = dataErasureDate,
+    alumni = alumni,
+    active = active,
+    groups = groups,
+    cursusUsers = cursusUsers,
+    projectsUsers = projectsUsers,
+    languagesUsers = languagesUsers,
+    achievements = achievements,
+    titles = titles,
+    titlesUsers = titlesUsers,
+    partnerships = partnerships,
+    patroned = patroned,
+    patroning = patroning,
+    expertisesUsers = expertisesUsers,
+    roles = roles,
+    campus = campus,
+    campusUsers = campusUsers
+)

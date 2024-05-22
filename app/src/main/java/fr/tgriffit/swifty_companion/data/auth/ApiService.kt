@@ -1,22 +1,15 @@
 package fr.tgriffit.swifty_companion.data.auth
 
 import android.content.ContentValues
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
 import com.google.gson.Gson
 import io.github.cdimascio.dotenv.dotenv
-import kotlinx.coroutines.DelicateCoroutinesApi
 import java.lang.Exception
-import java.util.UUID
 import java.util.concurrent.Executors
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 
 
 open class AuthParams {
@@ -31,15 +24,7 @@ open class AuthParams {
 
     val redirectUri =
         "myapp://callback/"//add your redirect uri ( https://www.oauth.com/oauth2-servers/redirect-uris/redirect-uris-native-apps/ )
-    protected val scope = "public"
-    protected var state = "12345"
-    protected val responseType = "code"
-    protected val getAccess42ApiUrl = "https://api.intra.42.fr/oauth/authorize"
     protected val get42TokenUrl = "https://api.intra.42.fr/oauth/token" // url to get the token
-    protected val grantType = "client_credentials"
-
-    protected val googleUrl = "https://www.google.fr/" //for testing
-
 
 }
 
@@ -49,42 +34,46 @@ open class AuthParams {
  */
 class ApiService : AuthParams() {
     protected var TAG = "ApiService"
-
-    private var token: String = "null"
-    private var tokenType: String = "null"
-
+    protected val requestApi42Url = "https://api.intra.42.fr/v2/"
+    private var token: Token? = null
     private val executor = Executors.newSingleThreadExecutor() //for API calls!
-    private val handler = Handler(Looper.getMainLooper()) //for refresh UI with received data
+    //private val handler = Handler(Looper.getMainLooper()) //for refresh UI with received data
+
+    fun setToken(token: Token?) {
+        if (token == null)
+            Log.e(TAG, "[ApiService] The token to set is invalid")
+        this.token = token
+    }
 
     fun exchangeCodeForToken42(code: String) : Token? {
         if (code.isEmpty()) return null
 
         val (request, response, result) = get42TokenUrl.httpPost(
             listOf(
-                "grant_type" to grantType,
+                "grant_type" to "authorization_code",
                 "client_id" to clientId,
                 "client_secret" to clientSecret,
                 "code" to code,
+                "redirect_uri" to redirectUri,
             )
         ).responseString()
         val parser = Gson()
 
         when (result){
-            is Result.Success -> {
-                Log.d(ContentValues.TAG, "Success  ${result.value}")
 
-                return parser.fromJson<Token>(result.value, Token::class.java)
+            is Result.Success -> {
+                token = parser.fromJson<Token>(result.value, Token::class.java)
+                return token
             }
 
             is Result.Failure -> {
                 Log.e(ContentValues.TAG, "Impossible to get token from 42 with the code given")
                 return null
             }
-
         }
     }
 
-    private fun setPublicAuthToken() {
+    /*private fun setPublicAuthToken() {
 
         try {
             val credentials = mapOf<String, String>(
@@ -109,7 +98,7 @@ class ApiService : AuthParams() {
                         TAG, "[SUCCESS] setPublicAuthToken:\n" +
                                 "RESULT VALUUUUE:\n${result.value}"
                     )
-                    token = tokenResultJson.access_token
+                    token = tokenResultJson
                     tokenType = tokenResultJson.token_type
                     Log.d(TAG, "token $token")
                     Log.d(TAG, "token type $tokenType")
@@ -140,9 +129,49 @@ class ApiService : AuthParams() {
             e.printStackTrace()
         }
 
+    }*/
+
+    fun getMe(): String{
+        TAG += ": getMe"
+        var result = ""
+        executor.execute{
+            result = callApi("me")
+            executor.shutdown()
+        }
+        if (executor.awaitTermination(42, TimeUnit.SECONDS))
+            return result
+        return result
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
+
+    private fun callApi(endPoint: String): String {
+        val fullUrl = requestApi42Url + endPoint
+
+        if (token == null)
+            throw RuntimeException("[CallApi] Invalid token")
+
+            try{
+                val (request, response, result) = fullUrl.httpGet()
+                    .header("Authorization", "${token!!.token_type} ${token!!.access_token}")
+                    .responseString()
+
+                when(result){
+                    is Result.Success -> {
+                        return result.value
+                    }
+                    is Result.Failure -> {
+                        Log.e(TAG, "[FAILURE] callApi: ${result.error.message}")
+                    }
+                }
+
+            }catch (exception: Exception){
+                Log.e(TAG, "callApi: $exception")
+            }
+
+        return ""
+    }
+
+  /*  @OptIn(DelicateCoroutinesApi::class)
     fun request42AccessToUser(onResult: (String) -> Unit) {
         TAG += ": request42AccessToUser"
         GlobalScope.launch(Dispatchers.IO) {
@@ -212,7 +241,7 @@ class ApiService : AuthParams() {
                 e.printStackTrace()
             }
         }
-    }
+    }*/
 
 
     /*init {
