@@ -56,30 +56,9 @@ class ApiService : AuthParams() {
     private val executor = Executors.newSingleThreadExecutor() //for API calls!
     private val handler = Handler(Looper.getMainLooper()) //for refresh UI with received data
 
-    private fun callApi(apiEndpoint: String, tokenType: String, token: String): Any {
-
-
-        val (request, response, result) = apiEndpoint
-            .httpGet()
-            .header(Pair("Authorization", "$tokenType $token"))
-            .responseString()
-
-        return when (result) {
-            is Result.Success -> {
-                Log.d(ContentValues.TAG, "Success  ${result.value}")
-            }
-
-            is Result.Failure -> {
-                Log.d(
-                    ContentValues.TAG,
-                    "Call API to 42 Intra Failed!\n=> Request=$request\nResult=>$result"
-                )
-            }
-        }
-
-    }
-
     fun exchangeCodeForToken42(code: String) : Token? {
+        if (code.isEmpty()) return null
+
         val (request, response, result) = get42TokenUrl.httpPost(
             listOf(
                 "grant_type" to grantType,
@@ -88,10 +67,7 @@ class ApiService : AuthParams() {
                 "code" to code,
             )
         ).responseString()
-
         val parser = Gson()
-
-
 
         when (result){
             is Result.Success -> {

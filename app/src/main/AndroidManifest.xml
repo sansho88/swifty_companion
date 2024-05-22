@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="fr.tgriffit.swifty_companion">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <queries>
@@ -29,28 +30,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <!-- Accepts URIs that begin with "https://www.example.com/gizmos” -->
-
-               <!-- <data android:scheme="myapp"
-
-                    android:pathPrefix="/callback" />-->
                 <data android:scheme="myapp" android:host="callback" />
 
-                <!-- note that the leading "/" is required for pathPrefix-->
             </intent-filter>
 
         </activity>
         <activity
-            android:name=".UserProfile"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="callback" />
-
-
-            </intent-filter>
+            android:name=".UserProfileActivity">
         </activity>
     </application>
 

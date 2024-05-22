@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import fr.tgriffit.swifty_companion.data.auth.ApiService
 import fr.tgriffit.swifty_companion.data.auth.AuthParams
@@ -20,6 +21,7 @@ class LoginActivity: AppCompatActivity() {
             "response_type=code"
 
     private val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(authorizationUrl))
+    lateinit var profileIntent : Intent
     private var code : String? = ""
     private var token : Token? = null
     private var error : String? = ""
@@ -28,23 +30,24 @@ class LoginActivity: AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         handleAuthRedirect(intent)
-        Log.d(TAG, "onResume: code = $code")
+        if (!code.isNullOrEmpty())
+        {
+            token = Token.createTokenFromCode(code)
+            if (token == null)
+                throw RuntimeException("Token not retrieved")
+            Log.d(TAG, "onResume: token = $token")
+            profileIntent.putExtra("token", token)
+            startActivity(profileIntent)
 
-        if (!code.isNullOrEmpty()) {
-            val executor = Executors.newSingleThreadExecutor() //for API calls!
-            executor.execute {
-                token = ApiService().exchangeCodeForToken42(code!!)
-                Log.d(TAG, "onResume: token = $token")
 
-            }
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_login)
+        profileIntent = Intent(this, UserProfileActivity::class.java)
+
         val loginButton : Button = findViewById(R.id.login_btn)
-       // val executor = Executors.newSingleThreadExecutor() //for API calls!
 
         try {
             loginButton.setOnClickListener {
@@ -57,21 +60,6 @@ class LoginActivity: AppCompatActivity() {
                 }
 
             }
-            /*executor.execute {
-//                    loginButton.visibility = View.INVISIBLE
-                // connexionPage.visibility = View.VISIBLE
-
-                runOnUiThread {
-                    ApiService().request42AccessToUser{result ->
-                        connexionPage.loadData(
-                            result,
-                            "text/html",
-                            "UTF-8"
-                        )
-                    }
-                }
-
-            }*/
         }
         catch (exception: Exception){
             Log.e(TAG, "[API ERROR] Something with the API process had a malfunction")
@@ -88,20 +76,15 @@ class LoginActivity: AppCompatActivity() {
 
                 // Échange le code d'autorisation contre un token ici
             } else if (error != null) {
-                Log.d(TAG, "Error during authorization: $error")
+                Log.e(TAG, "Error during authorization: [$error]")
+                Toast.makeText(this, "API permissions are needed", Toast.LENGTH_SHORT).show()
                 browserIntent.putExtra("error", error)
             }
             else {
-                Log.e(TAG, "No authorization code or error found")
+                Log.i(TAG, "No authorization code or error found")
             }
 
         }
     }
 
-    private fun exchangeCodeForAccessToken(code: String){
-        if (code.isEmpty()){
-            throw Exception("Code is empty")
-        }
-
-    }
 }

@@ -14,7 +14,11 @@ import java.nio.ByteBuffer
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-class UserProfile : AppCompatActivity() {
+private const val TAG = "UserProfileActivity"
+
+
+class UserProfileActivity : AppCompatActivity() {
+
 
     /*lateinit var apiResponse : String*/
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,27 +26,12 @@ class UserProfile : AppCompatActivity() {
         val myBuilder = CronetEngine.Builder(this.baseContext)
         val cronetEngine: CronetEngine = myBuilder.build()
         val executor: Executor = Executors.newSingleThreadExecutor()
-        ApiService()
-        //todo: to comment
-        val requestBuilder = cronetEngine.newUrlRequestBuilder(
-            "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41" +
-                    "&hourly=temperature_2m",
-            MyUrlRequestCallback(),
-            executor
-        )
 
-        val request: UrlRequest = requestBuilder.build()
-        request.start()
-        //todo  jusqu'ici
         setContentView(R.layout.user_profile)
 
 
     }
-
-
 }
-
-private const val TAG = "MyUrlRequestCallback"
 
 class MyUrlRequestCallback : UrlRequest.Callback() {
 
