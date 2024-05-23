@@ -1,5 +1,6 @@
-package fr.tgriffit.swifty_companion.data.model
+@file:Suppress("PrivatePropertyName")
 
+package fr.tgriffit.swifty_companion.data.model
 
 
 /**
@@ -9,86 +10,194 @@ open class UserData(
     private val id: Int,
     private val email: String,
     private val login: String,
-    private val firstName: String,
-    private val lastName: String,
-    private val usualFullName: String,
-    private val usualFirstName: String,
+    private val first_name: String,
+    private val last_name: String,
+    private val usual_full_name: String,
+    private val usual_first_name: String,
     private val url: String,
     private val phone: String?,
-    private val displayName: String,
+    private val display_name: String,
     private val kind: String,
-    private val image: Image,
+    internal val image: Image,
     private val staff: Boolean,
-    private val correctionPoint: Int,
-    private val poolMonth: String,
-    private val poolYear: String,
-    private val location: String?,
+    private val correction_point: Int,
+    private val pool_month: String,
+    private val pool_year: String,
+    internal val location: String?,
     private val wallet: Int,
-    private val anonymizeDate: String,
-    private val dataErasureDate: String?,
+    private val anonymize_date: String,
+    private val data_erasure_date: String?,
     private val alumni: Boolean,
     private val active: Boolean,
     private val groups: List<Any>,
-    private val cursusUsers: List<CursusUser>,
-    private val projectsUsers: List<Any>,
-    private val languagesUsers: List<LanguagesUser>,
+    private val cursus_users: List<CursusUser>,
+    private val projects_users: List<Any>,
+    private val languages_users: List<LanguagesUser>,
     private val achievements: List<Any>,
     private val titles: List<Any>,
-    private val titlesUsers: List<Any>,
+    private val titles_users: List<Any>,
     private val partnerships: List<Any>,
     private val patroned: List<Patroned>,
     private val patroning: List<Any>,
-    private val expertisesUsers: List<ExpertisesUser>,
+    private val expertises_users: List<ExpertisesUser>,
     private val roles: List<Any>,
     private val campus: List<Campus>,
-    private val campusUsers: List<CampusUser>
+    private val campus_users: List<CampusUser>
 ) {
     override fun toString(): String {
         return "User(" +
                 "id=$id, " +
                 "email='$email', " +
                 "login='$login', " +
-                "firstName='$firstName', " +
-                "lastName='$lastName', " +
-                "usualFullName='$usualFullName', " +
-                "usualFirstName='$usualFirstName', " +
+                "firstName='$first_name', " +
+                "lastName='$last_name', " +
+                "usualFullName='$usual_full_name', " +
+                "usualFirstName='$usual_first_name', " +
                 "url='$url', " +
                 "phone=$phone, " +
-                "displayName='$displayName', " +
+                "displayName='$display_name', " +
                 "kind='$kind', " +
                 "image=$image, " +
                 "staff=$staff, " +
-                "correctionPoint=$correctionPoint, " +
-                "poolMonth='$poolMonth', " +
-                "poolYear='$poolYear', " +
+                "correctionPoint=$correction_point, " +
+                "poolMonth='$pool_month', " +
+                "poolYear='$pool_year', " +
                 "location=$location, " +
                 "wallet=$wallet, " +
-                "anonymizeDate='$anonymizeDate', " +
-                "dataErasureDate=$dataErasureDate, " +
+                "anonymizeDate='$anonymize_date', " +
+                "dataErasureDate=$data_erasure_date, " +
                 "alumni=$alumni, " +
                 "active=$active, " +
                 "groups=$groups, " +
-                "cursusUsers=$cursusUsers, " +
-                "projectsUsers=$projectsUsers, " +
-                "languagesUsers=$languagesUsers, " +
+                "cursusUsers=$cursus_users, " +
+                "projectsUsers=$projects_users, " +
+                "languagesUsers=$languages_users, " +
                 "achievements=$achievements, " +
                 "titles=$titles, " +
-                "titlesUsers=$titlesUsers, " +
+                "titlesUsers=$titles_users, " +
                 "partnerships=$partnerships, " +
                 "patroned=$patroned, " +
                 "patroning=$patroning, " +
-                "expertisesUsers=$expertisesUsers, " +
+                "expertisesUsers=$expertises_users, " +
                 "roles=$roles, " +
                 "campus=$campus, " +
-                "campusUsers=$campusUsers" +
+                "campusUsers=$campus_users" +
                 ")"
     }
+
+    fun getLogin(): String {
+        return login
+    }
+    fun getFullName(): String {
+        return "$first_name $last_name"
+    }
+    fun getFirstName(): String {
+        return first_name
+    }
+    fun getLastName(): String {
+        return last_name
+    }
+    fun getUsualFullName(): String {
+        return usual_full_name
+    }
+    fun getUsualFirstName(): String {
+        return usual_first_name
+    }
+    fun getDisplayName(): String {
+        return display_name
+    }
+    fun getKind(): String {
+        return kind
+    }
+    fun getUrl(): String {
+        return url
+    }
+    fun getPhone(): String? {
+        return phone
+        }
+
+    fun getCampusUsers(): List<CampusUser> {
+        return campus_users
+    }
+    fun getCampus(): List<Campus> {
+        return campus
+    }
+    fun getExpertisesUsers(): List<ExpertisesUser> {
+        return expertises_users
+    }
+    fun getPatroned(): List<Patroned> {
+        return patroned
+        }
+
+    fun getPatroning(): List<Any> {
+        return patroning
+    }
+    fun getProjectsUsers(): List<Any> {
+        return projects_users
+    }
+    fun getTitlesUsers(): List<Any> {
+        return titles_users
+    }
+    fun getTitles(): List<Any> {
+        return titles
+    }
+    fun getPartnerships(): List<Any> {
+        return partnerships
+        }
+
+    fun getLanguagesUsers(): List<LanguagesUser> {
+        return languages_users
+    }
+    fun getCursusUsers(): List<CursusUser> {
+        return cursus_users
+    }
+    fun getGroups(): List<Any> {
+        return groups
+        }
+
+    fun getAlumni(): Boolean {
+        return alumni
+    }
+
+    fun getActive(): Boolean {
+        return active
+    }
+
+    fun getStaff(): Boolean {
+        return staff
+    }
+
+    fun getPoolMonth(): String {
+        return pool_month
+    }
+
+    fun getPoolYear(): String {
+        return pool_year
+    }
+
+    fun getCorrectionPoint(): Int {
+        return correction_point
+    }
+
+    fun getWallet(): Int {
+        return wallet
+    }
+
+    fun getAnonymizeDate(): String {
+        return anonymize_date
+    }
+
+    fun getDataErasureDate(): String? {
+        return data_erasure_date
+    }
+
 }
 
-open class Image(
+public class Image(
     val link: String,
     val versions: Versions
-)
+){
+}
 
 open class Versions(
     val large: String,
@@ -104,8 +213,8 @@ open class CursusUser(
     val grade: String?,
     val level: Double,
     val skills: List<Any>,
-    val cursusId: Int,
-    val hasCoalition: Boolean,
+    val cursus_id: Int,
+    val has_coalition: Boolean,
     val user: UserX,
     val cursus: Cursus
 )
@@ -118,7 +227,7 @@ open class UserX(
 
 open class Cursus(
     val id: Int,
-    val createdAt: String,
+    val created_at: String,
     val name: String,
     val slug: String
 )

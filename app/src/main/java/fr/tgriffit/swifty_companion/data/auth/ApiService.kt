@@ -12,7 +12,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 
-open class AuthParams {
+open class AuthParams() {
 
     private val dotenv = dotenv { //path to .env file: app/src/main/assets/env
         directory = "/assets"
@@ -28,14 +28,30 @@ open class AuthParams {
 
 }
 
+class Request{
+    val ME = "me"
+    val USERS = "users"
+
+    fun userByLogin(login: String): String{
+        return "$USERS?filter[login]=$login"
+    }
+}
+
 /**
  * https://hirukarunathilaka.medium.com/token-based-authentication-rest-api-implementation-for-android-kotlin-apps-d2109b18eb36
  * https://api.intra.42.fr/apidoc/guides/getting_started
  */
-class ApiService : AuthParams() {
+class ApiService() : AuthParams() {
+
+    constructor(token : Token?) : this() {
+        this.token = token
+    }
+
     protected var TAG = "ApiService"
     protected val requestApi42Url = "https://api.intra.42.fr/v2/"
+    val request = Request()
     private var token: Token? = null
+
     private val executor = Executors.newSingleThreadExecutor() //for API calls!
     //private val handler = Handler(Looper.getMainLooper()) //for refresh UI with received data
 
@@ -45,7 +61,7 @@ class ApiService : AuthParams() {
         this.token = token
     }
 
-    fun exchangeCodeForToken42(code: String) : Token? {
+    fun exchangeCodeForToken42(code: String): Token? {
         if (code.isEmpty()) return null
 
         val (request, response, result) = get42TokenUrl.httpPost(
@@ -59,7 +75,7 @@ class ApiService : AuthParams() {
         ).responseString()
         val parser = Gson()
 
-        when (result){
+        when (result) {
 
             is Result.Success -> {
                 token = parser.fromJson<Token>(result.value, Token::class.java)
@@ -131,11 +147,11 @@ class ApiService : AuthParams() {
 
     }*/
 
-    fun getMe(): String{
+    fun getAbout(info: String): String {
         TAG += ": getMe"
         var result = ""
-        executor.execute{
-            result = callApi("me")
+        executor.execute {
+            result = callApi(info)
             executor.shutdown()
         }
         if (executor.awaitTermination(42, TimeUnit.SECONDS))
@@ -150,98 +166,99 @@ class ApiService : AuthParams() {
         if (token == null)
             throw RuntimeException("[CallApi] Invalid token")
 
-            try{
-                val (request, response, result) = fullUrl.httpGet()
-                    .header("Authorization", "${token!!.token_type} ${token!!.access_token}")
-                    .responseString()
+        try {
+            val (request, response, result) = fullUrl.httpGet()
+                .header("Authorization", "${token!!.token_type} ${token!!.access_token}")
+                .responseString()
 
-                when(result){
-                    is Result.Success -> {
-                        return result.value
-                    }
-                    is Result.Failure -> {
-                        Log.e(TAG, "[FAILURE] callApi: ${result.error.message}")
-                    }
+            when (result) {
+                is Result.Success -> {
+                    return result.value
                 }
 
-            }catch (exception: Exception){
-                Log.e(TAG, "callApi: $exception")
+                is Result.Failure -> {
+                    Log.e(TAG, "[FAILURE] callApi: ${result.error.message}")
+                }
             }
+
+        } catch (exception: Exception) {
+            Log.e(TAG, "callApi: $exception")
+        }
 
         return ""
     }
 
-  /*  @OptIn(DelicateCoroutinesApi::class)
-    fun request42AccessToUser(onResult: (String) -> Unit) {
-        TAG += ": request42AccessToUser"
-        GlobalScope.launch(Dispatchers.IO) {
-            var finalResult = "Answer not received actually mon gars"
+    /*  @OptIn(DelicateCoroutinesApi::class)
+      fun request42AccessToUser(onResult: (String) -> Unit) {
+          TAG += ": request42AccessToUser"
+          GlobalScope.launch(Dispatchers.IO) {
+              var finalResult = "Answer not received actually mon gars"
 
-            val authorizationUrl = "https://api.intra.42.fr/oauth/authorize?" +
-                    "client_id=$clientId&" +
-                    "redirect_uri=$redirectUri&" +
-                    "scope=$scope&" +
-                    "response_type=code"
-            try {
-                state = UUID.randomUUID().toString()
+              val authorizationUrl = "https://api.intra.42.fr/oauth/authorize?" +
+                      "client_id=$clientId&" +
+                      "redirect_uri=$redirectUri&" +
+                      "scope=$scope&" +
+                      "response_type=code"
+              try {
+                  state = UUID.randomUUID().toString()
 
-                 val (request, response, result) = getAccess42ApiUrl.httpGet(
-                listOf(
-                    "client_id" to clientId,
-                    "redirect_uri" to redirectUri,
-                    "scope" to scope,
-                    "state" to state,
-                    "response_type" to responseType
-                )
-            )
-                .responseString()
+                   val (request, response, result) = getAccess42ApiUrl.httpGet(
+                  listOf(
+                      "client_id" to clientId,
+                      "redirect_uri" to redirectUri,
+                      "scope" to scope,
+                      "state" to state,
+                      "response_type" to responseType
+                  )
+              )
+                  .responseString()
 
-              //  val (request, response, result) = googleUrl.httpGet().responseString()
+                //  val (request, response, result) = googleUrl.httpGet().responseString()
 
-                when (result) {
-                    is Result.Success -> {
-                        Log.d(
-                            TAG, "[SUCCESS] request42AccessToUser:\n" +
-                                    "Ask for access page:${result.get()}"
-                        )
-                        // finalResult =  result.value
-                        finalResult = result.get()
-                        withContext(Dispatchers.Main) {
-                            onResult(finalResult)
-                        }
+                  when (result) {
+                      is Result.Success -> {
+                          Log.d(
+                              TAG, "[SUCCESS] request42AccessToUser:\n" +
+                                      "Ask for access page:${result.get()}"
+                          )
+                          // finalResult =  result.value
+                          finalResult = result.get()
+                          withContext(Dispatchers.Main) {
+                              onResult(finalResult)
+                          }
 
-                    }
+                      }
 
-                    is Result.Failure -> {
-                        if (response.statusCode == 401)
-                            Log.e(
-                                TAG, "=======================\n" +
-                                        "request42AccessToUser: 401 Unauthorized\n" +
-                                        "Check if the client_secret in the env file is still up-to-date" +
-                                        "\n(app/src/main/assets/env)" +
-                                        "\n======================="
-                            )
-                        else
-                            Log.e(
-                                TAG,
-                                "request42AccessToUser: FAILED:\n" +
-                                        "UID=$clientId\n" +
-                                        "SECRET=$clientSecret\n" +
-                                        "request => $request" +
-                                        "\n Response => $response ====== ${result.error.exception}",
-                            )
-                        finalResult = result.error.message.toString()
-                        withContext(Dispatchers.Main) {
-                            onResult(finalResult)
-                        }
-                    }
-                }
+                      is Result.Failure -> {
+                          if (response.statusCode == 401)
+                              Log.e(
+                                  TAG, "=======================\n" +
+                                          "request42AccessToUser: 401 Unauthorized\n" +
+                                          "Check if the client_secret in the env file is still up-to-date" +
+                                          "\n(app/src/main/assets/env)" +
+                                          "\n======================="
+                              )
+                          else
+                              Log.e(
+                                  TAG,
+                                  "request42AccessToUser: FAILED:\n" +
+                                          "UID=$clientId\n" +
+                                          "SECRET=$clientSecret\n" +
+                                          "request => $request" +
+                                          "\n Response => $response ====== ${result.error.exception}",
+                              )
+                          finalResult = result.error.message.toString()
+                          withContext(Dispatchers.Main) {
+                              onResult(finalResult)
+                          }
+                      }
+                  }
 
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }*/
+              } catch (e: Exception) {
+                  e.printStackTrace()
+              }
+          }
+      }*/
 
 
     /*init {
