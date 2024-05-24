@@ -9,7 +9,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "fr.tgriffit.swiftycompanion"
+        applicationId = "fr.tgriffit.swifty__companion"
         minSdk = 27
         targetSdk = 34
         versionCode = 1

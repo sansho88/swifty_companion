@@ -2,6 +2,7 @@ package fr.tgriffit.swifty_companion.data.auth
 
 import android.os.Parcel
 import android.os.Parcelable
+import android.util.Log
 import androidx.versionedparcelable.VersionedParcelize
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -33,8 +34,6 @@ data class Token(
                 "created_at=$created_at)"
     }
 
-
-
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(access_token)
         parcel.writeString(token_type)
@@ -61,7 +60,11 @@ data class Token(
             if (!code.isNullOrEmpty()) {
                 val executor = Executors.newSingleThreadExecutor() //for API calls!
                 executor.execute {
-                    token = ApiService().exchangeCodeForToken42(code)
+                    try {
+                        token = ApiService().exchangeCodeForToken42(code)
+                    }catch (exception: Exception){
+                        Log.e("Token", exception.toString())
+                    }
                     executor.shutdown()
                 }
                 if (executor.awaitTermination(42, TimeUnit.SECONDS))

@@ -7,10 +7,8 @@ import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import fr.tgriffit.swifty_companion.data.auth.ApiService
 import fr.tgriffit.swifty_companion.data.auth.AuthParams
 import fr.tgriffit.swifty_companion.data.auth.Token
-import java.util.concurrent.Executors
 
 class LoginActivity: AppCompatActivity() {
     private var TAG = "LOGIN_ACTIVITY"
@@ -29,40 +27,29 @@ class LoginActivity: AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        handleAuthRedirect(intent)
-        if (!code.isNullOrEmpty())
-        {
-            token = Token.createTokenFromCode(code)
-            if (token == null)
-                throw RuntimeException("Token not retrieved")
-            Log.d(TAG, "onResume: token = $token")
-            profileIntent.putExtra("token", token)
-            startActivity(profileIntent)
-
-
-        }
+        obtainsTokenWhenCodeReceived()
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        profileIntent = Intent(this, UserProfileActivity::class.java)
+        askForPermsApi()
+    }
 
+    private fun askForPermsApi(){
+        profileIntent = Intent(this, UserProfileActivity::class.java)
         val loginButton : Button = findViewById(R.id.login_btn)
 
         try {
             loginButton.setOnClickListener {
-                TAG += ": Login Button"
-
                 if (browserIntent.resolveActivity(packageManager) != null) {
                     startActivity(browserIntent)
-                } else {
+                } else
                     Log.d(TAG, "Aucune application pour gérer cet intent")
-                }
-
             }
         }
         catch (exception: Exception){
-            Log.e(TAG, "[API ERROR] Something with the API process had a malfunction")
+            Log.e(TAG, "[API ERROR] Something with the API process had a malfunction:\n" +
+                    "$exception")
         }
     }
     private fun handleAuthRedirect(intent: Intent?) {
@@ -71,19 +58,33 @@ class LoginActivity: AppCompatActivity() {
              code = uri.getQueryParameter("code")
              error = uri.getQueryParameter("error")
             if (code != null) {
-                Log.d(TAG, "Authorization code received: $code")
                 browserIntent.putExtra("code", code)
-
-                // Échange le code d'autorisation contre un token ici
             } else if (error != null) {
                 Log.e(TAG, "Error during authorization: [$error]")
                 Toast.makeText(this, "API permissions are needed", Toast.LENGTH_SHORT).show()
-                browserIntent.putExtra("error", error)
             }
             else {
                 Log.i(TAG, "No authorization code or error found")
             }
 
+        }
+    }
+
+    private fun obtainsTokenWhenCodeReceived(){
+        if (token != null)
+            return
+        handleAuthRedirect(intent)
+        if (!code.isNullOrEmpty())
+        {
+            try {
+                token = Token.createTokenFromCode(code)
+                if (token != null){
+                    profileIntent.putExtra("token", token)
+                    startActivity(profileIntent)
+                }
+            }catch (exception: Exception){
+                Log.e(TAG, "Something with the API process had a malfunction:\n$exception")
+            }
         }
     }
 
