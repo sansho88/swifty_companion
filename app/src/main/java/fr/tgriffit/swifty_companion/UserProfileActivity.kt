@@ -13,6 +13,7 @@ import com.google.android.material.imageview.ShapeableImageView
 import com.google.gson.Gson
 import fr.tgriffit.swifty_companion.data.User
 import fr.tgriffit.swifty_companion.data.auth.ApiService
+import fr.tgriffit.swifty_companion.data.auth.Request
 import fr.tgriffit.swifty_companion.data.auth.Token
 import java.util.Locale
 import java.util.concurrent.Executors
@@ -42,7 +43,7 @@ class UserProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.user_profile)
-        val executor = Executors.newSingleThreadExecutor()
+
         
         token = intent.getParcelableExtra<Token?>("token", Token::class.java)!!
         apiService = ApiService(token)
@@ -52,36 +53,48 @@ class UserProfileActivity : AppCompatActivity() {
 
         try {
             user = gson.fromJson(apiService.getAbout("me"), User::class.java)
-            //user = gson.fromJson(apiService.getAbout(Request().userByLogin("tgriffit"/*user.getLogin()*/)), User::class.java) //fixme: classe User differente
 
+            //user = gson.fromJson(apiService.getAbout(Request().userByLogin("tgriffit"/*user.getLogin()*/)), User::class.java) //fixme: classe User differente
+           /* var poubelle = apiService.getAbout("me")
+            Log.d(TAG, "onCreate: poubelle : $poubelle")*/
             Log.d(TAG, "onCreate: user : $user")
             updateUserData(user)
 
 
-            searchBar.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    return true
-                }
 
-                override fun onQueryTextSubmit(login: String?): Boolean { //fixme: crash when submit pressed
-                    if (!login.isNullOrEmpty() && login.isNotBlank())
-                    {
-                       /* Log.d(TAG, "Login searched: $login")
-                        executor.execute {
-                            Log.d(TAG, "onSubmit: [$login] =>\n ${apiService.getAbout("me")}")
-                            executor.shutdown()
-                        }
-                        if (executor.awaitTermination(10, TimeUnit.SECONDS))*/
-                            return false
-                    }
-                    return false
-                }
-            })
 
 
         }catch (exception : Exception){
             Log.e(TAG, "onCreate: ApiService().getMe: ", exception)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val executor = Executors.newSingleThreadExecutor()
+
+        searchBar.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextSubmit(login: String?): Boolean {
+                if (!login.isNullOrEmpty() && login.isNotBlank())
+                {
+                    executor.execute {
+                        Log.d(TAG, "Login searched: $login")
+                        Log.d(TAG, "onSubmit: [$login] =>\n ${apiService.getAbout(Request().userByLogin(login))}")
+
+                    }
+                    if (executor.awaitTermination(1, TimeUnit.SECONDS))
+                        executor.shutdown()
+
+                    return false
+                }
+                return false
+            }
+        })
+
     }
     
     private fun updateUserData(updatedUser : User = user){

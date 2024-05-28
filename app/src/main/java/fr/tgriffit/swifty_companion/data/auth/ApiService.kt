@@ -89,9 +89,8 @@ class ApiService() : AuthParams() {
         var result = ""
         executor.execute {
             result = callApi(info)
-            executor.shutdown()
         }
-        if (executor.awaitTermination(42, TimeUnit.SECONDS))
+        if (executor.awaitTermination(1, TimeUnit.SECONDS)) //attention au reseau...
             return result
         return result
     }
