@@ -32,6 +32,9 @@ class Request{
     fun userByLogin(login: String): String{
         return "$USERS?filter[login]=$login"
     }
+    fun userById(id: Int): String{
+        return "$USERS/$id"
+    }
 }
 
 /**
