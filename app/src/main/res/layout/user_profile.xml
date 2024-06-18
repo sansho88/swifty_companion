@@ -15,10 +15,10 @@
         android:textSize="52sp"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@id/user_avatar"
-        app:layout_constraintEnd_toEndOf="@id/search_user_searchView"
+        app:layout_constraintEnd_toEndOf="@id/search_bar_cardview_layout"
 
-        app:layout_constraintStart_toStartOf="@id/search_user_searchView"
-        app:layout_constraintTop_toBottomOf="@id/search_user_searchView"
+        app:layout_constraintStart_toStartOf="@id/search_bar_cardview_layout"
+        app:layout_constraintTop_toBottomOf="@id/search_bar_cardview_layout"
         app:layout_constraintVertical_bias="0.134" />
 
     <TextView
@@ -29,8 +29,8 @@
         android:textSize="24sp"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/search_user_searchView"
-        app:layout_constraintStart_toStartOf="@id/search_user_searchView"
+        app:layout_constraintEnd_toEndOf="@id/search_bar_cardview_layout"
+        app:layout_constraintStart_toStartOf="@id/search_bar_cardview_layout"
         app:layout_constraintTop_toBottomOf="@id/user_avatar"
         app:layout_constraintVertical_bias="0.02" />
 
@@ -44,7 +44,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@id/search_user_searchView"
+        app:layout_constraintStart_toStartOf="@id/search_bar_cardview_layout"
         app:layout_constraintTop_toBottomOf="@id/user_fullName_text"
         app:layout_constraintVertical_bias="0.02" />
 
@@ -91,24 +91,47 @@
         app:layout_constraintTop_toBottomOf="@id/exp_progressBar"
         app:layout_constraintVertical_bias="0.02" />
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/search_user_searchView"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-
+    <androidx.cardview.widget.CardView
+        android:id="@+id/search_bar_cardview_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="10dp"
+        app:contentPadding="2dp"
+        app:cardElevation="4dp"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="@color/cardview_background_color">
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/search_user_searchView"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+
+        app:iconifiedByDefault="false"
+        android:imeOptions="actionSearch"
+        android:inputType="textPersonName"
+        app:queryHint="Login"
+
+        app:queryBackground="@color/searchbar_intput_backgroundcolor"
+
+        app:submitBackground="@android:color/holo_green_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginVertical="10dp"
         />
+    </androidx.cardview.widget.CardView>
+
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/user_avatar"
         android:layout_width="180dp"
         android:layout_height="180dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="@id/search_user_searchView"
-        app:layout_constraintEnd_toEndOf="@+id/search_user_searchView"
+        app:layout_constraintStart_toStartOf="@id/search_bar_cardview_layout"
+        app:layout_constraintEnd_toEndOf="@+id/search_bar_cardview_layout"
         app:layout_constraintTop_toBottomOf="@+id/user_login_text"
         tools:srcCompat="@tools:sample/avatars"
         android:src="@drawable/cat"

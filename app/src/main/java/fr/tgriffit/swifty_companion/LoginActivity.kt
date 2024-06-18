@@ -27,7 +27,11 @@ class LoginActivity: AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        obtainsTokenWhenCodeReceived()
+        if (token == null)
+        {
+            Log.d(TAG, "onResume: create new token")
+            obtainsTokenWhenCodeReceived()
+        }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +85,7 @@ class LoginActivity: AppCompatActivity() {
                 if (token != null){
                     profileIntent.putExtra("token", token)
                     startActivity(profileIntent)
+                    finish()
                 }
             }catch (exception: Exception){
                 Log.e(TAG, "Something with the API process had a malfunction:\n$exception")

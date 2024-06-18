@@ -25,14 +25,31 @@ open class AuthParams() {
 
 }
 
-class Request{
+class Request {
     val ME = "me"
     val USERS = "users"
 
-    fun userByLogin(login: String): String{
+    /**
+     * Get an "array" of users matching perfectly the given login.
+     * The array is size 1.
+     * @param login=login of user searched
+     */
+    fun userByLogin(login: String): String {
         return "$USERS?filter[login]=$login"
     }
-    fun userById(id: Int): String{
+
+    /**
+     * Get the current user.
+     */
+    fun me(): String {
+        return ME
+    }
+
+    /**
+     * Get the user with the given id.
+     * @param id=id of user searched
+     */
+    fun userById(id: Int): String {
         return "$USERS/$id"
     }
 }
@@ -42,7 +59,7 @@ class Request{
  * https://api.intra.42.fr/apidoc/guides/getting_started
  */
 class ApiService() : AuthParams() {
-    constructor(token : Token?) : this() {
+    constructor(token: Token?) : this() {
         this.token = token
     }
 
@@ -77,28 +94,34 @@ class ApiService() : AuthParams() {
 
             is Result.Success -> {
                 token = parser.fromJson<Token>(result.value, Token::class.java)
+                Log.d(TAG, "Token created")
                 return token
             }
 
             is Result.Failure -> {
                 Log.e(TAG, "Impossible to get token from 42 with the code given")
-                throw RuntimeException("\n[ApiService]${result.error}")
+                throw RuntimeException("\n[ApiService]The 42 app's API key should be renewed on the intranet.\n${result.error}")
             }
         }
     }
 
-    fun getAbout(info: String): String {
-        TAG += ": getMe"
-        var result = ""
+    fun getAbout(info: String?): String? {
+        var result: String? = null
+        if (info.isNullOrEmpty())
+            return null
         executor.execute {
             result = callApi(info)
+            Log.d(
+                TAG,
+                "GetAbout: result: $result. Is null? ${result == null}. Is empty? ${result == ""}"
+            )
         }
         if (executor.awaitTermination(1, TimeUnit.SECONDS)) //attention au reseau...
             return result
         return result
     }
 
-    private fun callApi(endPoint: String): String {
+    private fun callApi(endPoint: String): String? {
         val fullUrl = requestApi42Url + endPoint
 
         if (token == null)
@@ -109,12 +132,17 @@ class ApiService() : AuthParams() {
                 .header("Authorization", "${token!!.token_type} ${token!!.access_token}")
                 .responseString()
 
-            when (result) {
+            return when (result) {
                 is Result.Success -> {
-                    return result.value
+                    if (result.value == "[]")
+                        ""
+                    else
+                        result.value
                 }
+
                 is Result.Failure -> {
                     Log.e(TAG, "[FAILURE] callApi: ${result.error.message}")
+                    null
                 }
             }
         } catch (exception: Exception) {
