@@ -1,12 +1,15 @@
 package fr.tgriffit.swifty_companion
 
+import fr.tgriffit.swifty_companion.data.model.SharedViewModel
 import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
 import android.text.InputFilter
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ProgressBar
@@ -14,29 +17,33 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.NonNull
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.IntentCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import fr.tgriffit.swifty_companion.data.User
-import fr.tgriffit.swifty_companion.data.auth.ApiService
 import fr.tgriffit.swifty_companion.data.auth.Request
-import fr.tgriffit.swifty_companion.data.auth.Token
 import fr.tgriffit.swifty_companion.data.model.UserData
+import fr.tgriffit.swifty_companion.databinding.UserProfileBinding
+import fr.tgriffit.swifty_companion.ui.main.PageViewModel
+import fr.tgriffit.swifty_companion.ui.main.PlaceholderFragment
 import java.util.Locale
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
+
 
 private const val TAG = "UserProfileActivity"
 
 
-class UserProfileActivity : AppCompatActivity() {
+class UserProfileFragment : Fragment() {
 
-    lateinit var apiService: ApiService
-    var token: Token? = null
+
+
     var user: User? = null
     var currentCursus: UserData.CursusUser? = null
     private val gson = Gson()
@@ -52,17 +59,33 @@ class UserProfileActivity : AppCompatActivity() {
     lateinit var userAvatar: ShapeableImageView
     lateinit var userExpBar: ProgressBar
     lateinit var cursusSpinner: Spinner
+    private var _binding: UserProfileBinding? = null
 
+    private lateinit var pageViewModel: PageViewModel
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+    private val sharedViewModel: SharedViewModel by lazy { ViewModelProvider(this)[SharedViewModel::class.java] }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.user_profile)
+        pageViewModel = ViewModelProvider(this).get(PageViewModel::class.java).apply {
+            setIndex(arguments?.getInt(ARG_SECTION_NUMBER) ?: 1)
+        }
+    }
 
 
-        if (token == null)
-            token = IntentCompat.getParcelableExtra(intent, "token", Token::class.java)!!
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreate(savedInstanceState)
+        //setContentView(R.layout.user_profile)
+        _binding = UserProfileBinding.inflate(inflater, container, false)
+        val root = binding.root
 
-        apiService = ApiService(token)
+
+
 
         initUserProfileUIElements()
         cursusSpinner.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
@@ -75,6 +98,10 @@ class UserProfileActivity : AppCompatActivity() {
             Log.e(TAG, "onCreate: ApiService().getMe: ", exception)
         }
 
+        sharedViewModel.searchQuery.observe(viewLifecycleOwner, Observer { query ->
+            // Effectuez votre requête API ici et mettez à jour les composants
+            performSearch(query) //todo: Mettre a jour SharedViewModel qui contiendra l'USER entier et la requete de la barre de recheche
+        })
         searchBar.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
             .setTextColor(Color.WHITE)
         val searchBarEditText =
@@ -87,7 +114,7 @@ class UserProfileActivity : AppCompatActivity() {
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText?.length == MAX_LOGIN_LEN)
                     Toast.makeText(
-                        this@UserProfileActivity,
+                        requireContext(),
                         "A login can't be bigger",
                         Toast.LENGTH_SHORT
                     ).show()
@@ -122,7 +149,7 @@ class UserProfileActivity : AppCompatActivity() {
                         Log.d(TAG, "onSubmit: user : $user")
 
                     }
-                    Toast.makeText(this@UserProfileActivity, "Fetching data...", Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), "Fetching data...", Toast.LENGTH_SHORT)
                         .show()
                     if (executor.awaitTermination(
                             3,
@@ -134,7 +161,7 @@ class UserProfileActivity : AppCompatActivity() {
                         updateUserData(user!!)
                     else {
                         val snackbar = Snackbar.make(
-                            findViewById(R.id.user_fullName_text),
+                            userName,
                             "$login doesn't exist",
                             Snackbar.LENGTH_SHORT
                         )
@@ -152,7 +179,7 @@ class UserProfileActivity : AppCompatActivity() {
                 return false
             }
         })
-
+        return root
     }
 
     override fun onResume() {
@@ -166,7 +193,7 @@ class UserProfileActivity : AppCompatActivity() {
 
     private fun updateUserCursus(cursusUserList: List<UserData.CursusUser>) {
         val cursus = cursusUserList
-        val adapter = ArrayAdapter(this, R.layout.cursus_spinner_item, cursus.map { it.cursus.name })
+        val adapter = ArrayAdapter(requireContext(), R.layout.cursus_spinner_item, cursus.map { it.cursus.name })
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         cursusSpinner.adapter = adapter
         val level = currentCursus?.level ?: 0.0
@@ -211,16 +238,41 @@ class UserProfileActivity : AppCompatActivity() {
     }
 
     private fun initUserProfileUIElements() {
-        userLogin = findViewById(R.id.user_login_text)
-        userName = findViewById(R.id.user_fullName_text)
-        userLevel = findViewById(R.id.user_level_text)
-        userGrade = findViewById(R.id.user_grade_text)
-        userEvalPoints = findViewById(R.id.user_evalPoints_text)
-        userPosition = findViewById(R.id.user_placeConnected_text)
-        searchBar = findViewById(R.id.search_user_searchView)
-        userAvatar = findViewById(R.id.user_avatar)
-        userExpBar = findViewById(R.id.exp_progressBar)
-        cursusSpinner = findViewById(R.id.spinner)
+        userLogin = binding.userLoginText
+        userName = binding.userFullNameText
+        userLevel = binding.userLevelText
+        userGrade = binding.userGradeText
+        userEvalPoints = binding.userEvalPointsText
+        userPosition = binding.userPlaceConnectedText
+        userAvatar = binding.userAvatar
+        userExpBar = binding.expProgressBar
+        cursusSpinner = binding.spinner
+    }
+
+    companion object {
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
+        private const val ARG_SECTION_NUMBER = "section_number"
+
+        /**
+         * Returns a new instance of this fragment for the given section
+         * number.
+         */
+        @JvmStatic
+        fun newInstance(sectionNumber: Int): PlaceholderFragment {
+            return PlaceholderFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(ARG_SECTION_NUMBER, sectionNumber)
+                }
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

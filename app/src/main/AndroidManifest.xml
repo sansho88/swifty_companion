@@ -4,40 +4,48 @@
     package="fr.tgriffit.swifty_companion">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />
+
             <data android:scheme="https" />
         </intent>
     </queries>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:launchMode="singleTop"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Swifty_companion"
-        android:launchMode="singleTop"
         tools:targetApi="31">
-        <activity android:name=".LoginActivity"
-            android:exported="true" >
+        <activity
+            android:name=".HomeActivity"
+            android:exported="false"
+            android:label="@string/title_activity_home"
+            android:theme="@style/Theme.Swifty_companion.NoActionBar" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="myapp" android:host="callback" />
-
+                <data
+                    android:host="callback"
+                    android:scheme="myapp" />
             </intent-filter>
-
         </activity>
-        <activity
-            android:name=".UserProfileActivity">
-        </activity>
+        <activity android:name=".UserProfileFragment"></activity>
     </application>
 
 </manifest>

@@ -40,7 +40,7 @@ class LoginActivity: AppCompatActivity() {
     }
 
     private fun askForPermsApi(){
-        profileIntent = Intent(this, UserProfileActivity::class.java)
+        profileIntent = Intent(this, UserProfileFragment::class.java)
         val loginButton : Button = findViewById(R.id.login_btn)
 
         try {
