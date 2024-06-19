@@ -26,13 +26,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/user_fullname_text"
-        android:textSize="24sp"
+        android:textSize="@dimen/profile_data_text_size"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/search_bar_cardview_layout"
         app:layout_constraintStart_toStartOf="@id/search_bar_cardview_layout"
         app:layout_constraintTop_toBottomOf="@id/user_avatar"
         app:layout_constraintVertical_bias="0.02" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="409dp"
+        android:layout_height="wrap_content"
+
+        android:dropDownWidth="wrap_content"
+        android:gravity="fill"
+        android:spinnerMode="dropdown"
+
+        android:layout_marginStart="-42dp"
+        app:layout_constraintStart_toStartOf="@id/search_bar_cardview_layout"
+        app:layout_constraintTop_toBottomOf="@id/user_fullName_text"/>
 
     <TextView
         android:id="@+id/user_level_text"
@@ -44,8 +57,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@id/search_bar_cardview_layout"
-        app:layout_constraintTop_toBottomOf="@id/user_fullName_text"
+        app:layout_constraintStart_toStartOf="@id/exp_progressBar"
+        app:layout_constraintTop_toBottomOf="@id/exp_progressBar"
         app:layout_constraintVertical_bias="0.02" />
 
     <TextView
@@ -54,12 +67,13 @@
         android:layout_height="wrap_content"
         android:text="@string/grade"
         android:textSize="20sp"
+        android:ellipsize="end"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.1"
-        app:layout_constraintStart_toEndOf="@id/user_level_text"
-        app:layout_constraintTop_toBottomOf="@id/user_fullName_text"
+        app:layout_constraintStart_toEndOf="@id/user_evalPoints_text"
+        app:layout_constraintTop_toBottomOf="@id/spinner"
         app:layout_constraintVertical_bias="0.02" />
 
 
@@ -73,8 +87,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@id/user_level_text"
-        app:layout_constraintTop_toBottomOf="@id/exp_progressBar"
+        app:layout_constraintStart_toStartOf="@id/search_bar_cardview_layout"
+        app:layout_constraintTop_toBottomOf="@id/spinner"
+
         app:layout_constraintVertical_bias="0.02" />
 
     <TextView
@@ -82,14 +97,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/user_location_text"
-        android:textSize="20sp"
+        android:maxEms="6"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="@dimen/profile_data_text_size"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.2"
-        app:layout_constraintStart_toEndOf="@id/user_evalPoints_text"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toEndOf="@id/user_level_text"
         app:layout_constraintTop_toBottomOf="@id/exp_progressBar"
-        app:layout_constraintVertical_bias="0.02" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/search_bar_cardview_layout"
@@ -137,7 +155,8 @@
         android:src="@drawable/cat"
         app:shapeAppearance="@style/RoundedSquare"
         android:scaleType="centerCrop"
-        android:contentDescription="TODO"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/profile_picture_desc"
         />
 
     <ProgressBar
@@ -145,17 +164,17 @@
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="200dp"
         android:layout_height="20dp"
-        app:layout_constraintStart_toStartOf="@+id/user_level_text"
-        app:layout_constraintTop_toBottomOf="@id/user_level_text"
+        app:layout_constraintStart_toStartOf="@+id/user_evalPoints_text"
+        app:layout_constraintTop_toBottomOf="@id/user_evalPoints_text"
         android:layout_marginBottom="10dp"
         android:progress="42"
+
         android:progressTint="@color/light_green"
         android:progressBackgroundTint="@color/dark_green"
-        android:progressBackgroundTintMode="src_over"
+        android:progressBackgroundTintMode="src_over" />
 
 
 
-        />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

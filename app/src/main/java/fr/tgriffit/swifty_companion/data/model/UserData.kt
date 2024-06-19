@@ -234,7 +234,13 @@ open class UserData(
         val has_coalition: Boolean,
         val user: UserX,
         val cursus: Cursus
-    )
+
+
+    ) {
+        override fun toString(): String {
+            return "CursusUser(id=$id, beginAt='$beginAt', endAt=$endAt, grade=$grade, level=$level, skills=$skills, cursus_id=$cursus_id, has_coalition=$has_coalition, user=$user, cursus=$cursus)"
+        }
+    }
 
     open class UserX(
         val id: Int,
@@ -247,7 +253,13 @@ open class UserData(
         val created_at: String,
         val name: String,
         val slug: String
-    )
+
+
+    ) {
+        override fun toString(): String {
+            return "Cursus(id=$id, created_at='$created_at', name='$name', slug='$slug')"
+        }
+    }
 
     open class LanguagesUser(
         val id: Int,

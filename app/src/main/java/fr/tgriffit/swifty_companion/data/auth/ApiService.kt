@@ -79,7 +79,7 @@ class ApiService() : AuthParams() {
         if (code.isEmpty()) return null
         TAG = "ApiService: exchangeCodeForToken42"
 
-        val (request, response, result) = get42TokenUrl.httpPost(
+        val (_, _, result) = get42TokenUrl.httpPost(
             listOf(
                 "grant_type" to "authorization_code",
                 "client_id" to clientId,
@@ -111,10 +111,6 @@ class ApiService() : AuthParams() {
             return null
         executor.execute {
             result = callApi(info)
-            Log.d(
-                TAG,
-                "GetAbout: result: $result. Is null? ${result == null}. Is empty? ${result == ""}"
-            )
         }
         if (executor.awaitTermination(1, TimeUnit.SECONDS)) //attention au reseau...
             return result
@@ -128,7 +124,7 @@ class ApiService() : AuthParams() {
             throw RuntimeException("[CallApi] Invalid token")
 
         try {
-            val (request, response, result) = fullUrl.httpGet()
+            val (_, _, result) = fullUrl.httpGet()
                 .header("Authorization", "${token!!.token_type} ${token!!.access_token}")
                 .responseString()
 

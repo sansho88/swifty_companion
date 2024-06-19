@@ -16,4 +16,5 @@
     <string name="user_evalPoints_text">42 Points</string>
     <string name="user_location_text">z42r42p42</string>
     <string name="login_text">LOGIN TO\n 42 INTRA</string>
+    <string name="profile_picture_desc">Profile picture of the user, from the 42 intra</string>
 </resources>
