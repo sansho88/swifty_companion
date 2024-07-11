@@ -18,6 +18,7 @@
     <string name="login_text">LOGIN TO\n 42 INTRA</string>
     <string name="profile_picture_desc">Profile picture of the user, from the 42 intra</string>
     <string name="title_activity_home">HomeActivity</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_1">Profile</string>
+    <string name="tab_text_2">Projects</string>
+    <string name="tab_text_3">Skills</string>
 </resources>

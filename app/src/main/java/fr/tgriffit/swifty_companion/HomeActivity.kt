@@ -2,6 +2,7 @@ package fr.tgriffit.swifty_companion
 
 import fr.tgriffit.swifty_companion.data.model.SharedViewModel
 import android.os.Bundle
+import android.widget.Toast
 import com.google.android.material.tabs.TabLayout
 import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +16,7 @@ import androidx.activity.viewModels
 
 
 class HomeActivity : AppCompatActivity() {
+    val MAX_LOGIN_LEN = 8
 
     private lateinit var binding: ActivityHomeBinding
     lateinit var apiService: ApiService
@@ -25,9 +27,14 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityHomeBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(binding.root) //fixme?: la barre de recherche et les onglets n'apparaissent pas en bas
 
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
+        sectionsPagerAdapter.addFragment(UserProfileFragment())
+        /*TODO
+        sectionsPagerAdapter.addFragment(ProjectsFragment(), "Projects")
+        sectionsPagerAdapter.addFragment(SkillsFragment(), "Skills")*/
+
         val viewPager: ViewPager = binding.viewPager
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = binding.tabs
@@ -36,17 +43,26 @@ class HomeActivity : AppCompatActivity() {
             token = IntentCompat.getParcelableExtra(intent, "token", Token::class.java)!!
 
         apiService = ApiService(token)
+        sharedViewModel.setApiService(apiService)
 
         val searchView = binding.searchUserSearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
-                    sharedViewModel.setSearchQuery(query)
+                    sharedViewModel.setSearchQuery(query).performSearch()
                 }
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText?.length == MAX_LOGIN_LEN)
+                    Toast.makeText(
+                        this@HomeActivity,
+                        "A login can't be bigger",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
                 return true
             }
         })

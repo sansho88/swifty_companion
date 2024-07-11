@@ -45,7 +45,7 @@
                     android:scheme="myapp" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserProfileFragment"></activity>
+      
     </application>
 
 </manifest>

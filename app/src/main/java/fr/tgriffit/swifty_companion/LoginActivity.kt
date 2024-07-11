@@ -19,7 +19,7 @@ class LoginActivity: AppCompatActivity() {
             "response_type=code"
 
     private val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(authorizationUrl))
-    lateinit var profileIntent : Intent
+    lateinit var homeIntent : Intent
     private var code : String? = ""
     private var token : Token? = null
     private var error : String? = ""
@@ -40,7 +40,7 @@ class LoginActivity: AppCompatActivity() {
     }
 
     private fun askForPermsApi(){
-        profileIntent = Intent(this, UserProfileFragment::class.java)
+        homeIntent = Intent(this, HomeActivity::class.java)
         val loginButton : Button = findViewById(R.id.login_btn)
 
         try {
@@ -83,8 +83,8 @@ class LoginActivity: AppCompatActivity() {
             try {
                 token = Token.createTokenFromCode(code)
                 if (token != null){
-                    profileIntent.putExtra("token", token)
-                    startActivity(profileIntent)
+                    homeIntent.putExtra("token", token)
+                    startActivity(homeIntent)
                     finish()
                 }
             }catch (exception: Exception){

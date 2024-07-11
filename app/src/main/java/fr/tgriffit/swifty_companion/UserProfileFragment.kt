@@ -5,7 +5,6 @@ import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
-import android.text.InputFilter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +16,6 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.NonNull
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -25,7 +23,6 @@ import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import fr.tgriffit.swifty_companion.data.User
-import fr.tgriffit.swifty_companion.data.auth.Request
 import fr.tgriffit.swifty_companion.data.model.UserData
 import fr.tgriffit.swifty_companion.databinding.UserProfileBinding
 import fr.tgriffit.swifty_companion.ui.main.PageViewModel
@@ -33,7 +30,6 @@ import fr.tgriffit.swifty_companion.ui.main.PlaceholderFragment
 import java.util.Locale
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 
 
@@ -41,7 +37,6 @@ private const val TAG = "UserProfileActivity"
 
 
 class UserProfileFragment : Fragment() {
-
 
 
     var user: User? = null
@@ -55,13 +50,15 @@ class UserProfileFragment : Fragment() {
     lateinit var userGrade: TextView
     lateinit var userEvalPoints: TextView
     lateinit var userPosition: TextView
-    lateinit var searchBar: SearchView
+
+    //lateinit var searchBar: SearchView
     lateinit var userAvatar: ShapeableImageView
     lateinit var userExpBar: ProgressBar
     lateinit var cursusSpinner: Spinner
     private var _binding: UserProfileBinding? = null
 
     private lateinit var pageViewModel: PageViewModel
+
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -92,93 +89,50 @@ class UserProfileFragment : Fragment() {
         //cursusSpinner.findViewById<TextView>(android.R.id.text1).setTextColor(Color.WHITE)
 
         try {
-            user = gson.fromJson(apiService.getAbout("me"), User::class.java)
+            user = sharedViewModel.performSearch().user.value
             updateUserData(user!!)
         } catch (exception: Exception) {
             Log.e(TAG, "onCreate: ApiService().getMe: ", exception)
         }
 
+        var lastSearched: String = ""
+        //Detecte le changement de login dans la barre de recherche
         sharedViewModel.searchQuery.observe(viewLifecycleOwner, Observer { query ->
-            // Effectuez votre requête API ici et mettez à jour les composants
-            performSearch(query) //todo: Mettre a jour SharedViewModel qui contiendra l'USER entier et la requete de la barre de recheche
-        })
-        searchBar.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
-            .setTextColor(Color.WHITE)
-        val searchBarEditText =
-            searchBar.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
-        searchBarEditText.filters = arrayOf(InputFilter.LengthFilter(MAX_LOGIN_LEN))
-
-
-        searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            var lastSearched: String = ""
-            override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText?.length == MAX_LOGIN_LEN)
-                    Toast.makeText(
-                        requireContext(),
-                        "A login can't be bigger",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                return true
-            }
-
-            override fun onQueryTextSubmit(login: String?): Boolean {
-                if (login.isNullOrEmpty())
-                    return false
-                if (user != null && user!!.getLogin().equals(login, ignoreCase = true))
-                    return false
-                if (lastSearched.equals(login, ignoreCase = true))
-                    return false
-                lastSearched = login
+            if (isValidSearch(query, lastSearched)) {
+                lastSearched = query
                 val executor = Executors.newSingleThreadExecutor()
-                if (login.isNotEmpty() && login.isNotBlank()) {
-                    executor.execute {
-                        val newUser =
-                            apiService.getAbout(Request().userByLogin(login.trim())) //needed for request on ID and get ALL infos
+                executor.execute { searchForUser(query) }
 
-                        if (newUser.isNullOrEmpty()) {
-                            Log.e(TAG, "onQueryTextSubmit: user $login doesn't exist")
-                            user = null
-                            return@execute
-                        }
-                        val users = gson.fromJson(newUser, Array<User>::class.java)
-                        val userSearched =
-                            apiService.getAbout(Request().userById(users[0].id)) //get ALL infos
+                Toast.makeText(requireContext(), "Fetching data...", Toast.LENGTH_SHORT).show()
+                //3secs are necessary...or there's a decalage between searches
+                if (executor.awaitTermination(3, TimeUnit.SECONDS))
+                    executor.shutdown()
 
-                        user = gson.fromJson(userSearched, User::class.java)
-                        Log.d(TAG, "onSubmit: user : $user")
-
-                    }
-                    Toast.makeText(requireContext(), "Fetching data...", Toast.LENGTH_SHORT)
-                        .show()
-                    if (executor.awaitTermination(
-                            3,
-                            TimeUnit.SECONDS
+                user = sharedViewModel.user.value
+                if (user != null)
+                    binding.apply { updateUserData(user!!) }
+                else {
+                    val snackbar =
+                        Snackbar.make(userName, "$query doesn't exist", Snackbar.LENGTH_SHORT)
+                    snackbar.setTextColor(Color.WHITE)
+                    snackbar.setBackgroundTint(
+                        getResources().getColor(
+                            android.R.color.holo_blue_dark,
+                            Resources.getSystem().newTheme()
                         )
-                    ) //3secs are necessary...or there's a decalage between searches
-                        executor.shutdown()
-                    if (user != null)
-                        updateUserData(user!!)
-                    else {
-                        val snackbar = Snackbar.make(
-                            userName,
-                            "$login doesn't exist",
-                            Snackbar.LENGTH_SHORT
-                        )
-                        snackbar.setTextColor(Color.WHITE)
-                        snackbar.setBackgroundTint(
-                            getResources().getColor(
-                                android.R.color.holo_blue_dark,
-                                Resources.getSystem().newTheme()
-                            )
-                        )
-                        snackbar.show()
-                    }
-                    return false
+                    )
+                    snackbar.show()
                 }
-                return false
             }
+
         })
+        /* searchBar.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
+             .setTextColor(Color.WHITE)
+         val searchBarEditText =
+             searchBar.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
+         searchBarEditText.filters = arrayOf(InputFilter.LengthFilter(MAX_LOGIN_LEN))*/
+
+
         return root
     }
 
@@ -186,14 +140,42 @@ class UserProfileFragment : Fragment() {
         super.onResume()
     }
 
+    private fun isValidSearch(login: String?, lastSearched: String): Boolean {
+        if (login.isNullOrEmpty() || login.isBlank())
+            return false
+        if (user != null && user!!.getLogin().equals(login, ignoreCase = true))
+            return false
+        if (lastSearched.equals(login, ignoreCase = true))
+            return false
+        return true
+    }
+
+    private fun searchForUser(login: String) {
+        //needed for request on ID and get ALL infos
+        val newUser = sharedViewModel.performSearch().result.value
+
+        if (newUser.isNullOrEmpty()) {
+            Log.e(TAG, "onQueryTextSubmit: user $login doesn't exist")
+            user = null
+            return
+        }
+        val users = gson.fromJson(newUser, Array<User>::class.java)
+        user = sharedViewModel.performSearch().getUserFromResult()
+
+        Log.d(TAG, "onSubmit: user : $user")
+    }
+
     private fun updateUserLevel(level: Double) {
         userLevel.text = String.format(Locale.US, "Lvl: %,.2f %%", level)
-        userExpBar.progress = ((level - level.toInt() )* 100).toInt()
+        userExpBar.progress = ((level - level.toInt()) * 100).toInt()
     }
 
     private fun updateUserCursus(cursusUserList: List<UserData.CursusUser>) {
         val cursus = cursusUserList
-        val adapter = ArrayAdapter(requireContext(), R.layout.cursus_spinner_item, cursus.map { it.cursus.name })
+        val adapter = ArrayAdapter(
+            requireContext(),
+            R.layout.cursus_spinner_item,
+            cursus.map { it.cursus.name })
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         cursusSpinner.adapter = adapter
         val level = currentCursus?.level ?: 0.0
