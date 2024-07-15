@@ -5,5 +5,5 @@
     <color name="light_green">#00A524</color>
     <color name="dark_green">#80013806</color>
     <color name="cardview_background_color">#6638388B</color>
-    <color name="searchbar_intput_backgroundcolor">#332488CB</color>
+    <color name="searchbar_input_background_color">#332488CB</color>
 </resources>

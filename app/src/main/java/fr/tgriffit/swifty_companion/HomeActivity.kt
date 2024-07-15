@@ -2,6 +2,7 @@ package fr.tgriffit.swifty_companion
 
 import fr.tgriffit.swifty_companion.data.model.SharedViewModel
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import com.google.android.material.tabs.TabLayout
 import androidx.viewpager.widget.ViewPager
@@ -13,9 +14,11 @@ import fr.tgriffit.swifty_companion.data.auth.Token
 import fr.tgriffit.swifty_companion.ui.main.SectionsPagerAdapter
 import fr.tgriffit.swifty_companion.databinding.ActivityHomeBinding
 import androidx.activity.viewModels
+import fr.tgriffit.swifty_companion.ui.main.UserProfileFragment
 
 
 class HomeActivity : AppCompatActivity() {
+    private val TAG = "HomeActivity"
     val MAX_LOGIN_LEN = 8
 
     private lateinit var binding: ActivityHomeBinding
@@ -26,8 +29,10 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityHomeBinding.inflate(layoutInflater)
+        binding = ActivityHomeBinding.bind(layoutInflater.inflate(R.layout.activity_home, null))
+
         setContentView(binding.root) //fixme?: la barre de recherche et les onglets n'apparaissent pas en bas
+     //TODO: tuto sur les fragments https://developer.android.com/guide/fragments/create?hl=fr#kts
 
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
         sectionsPagerAdapter.addFragment(UserProfileFragment())

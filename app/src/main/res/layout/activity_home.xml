@@ -35,7 +35,7 @@
                 android:inputType="textPersonName"
                 app:queryHint="Login"
 
-                app:queryBackground="@color/searchbar_intput_backgroundcolor"
+                app:queryBackground="@color/searchbar_input_background_color"
 
                 app:submitBackground="@android:color/holo_green_light"
                 app:layout_constraintEnd_toEndOf="parent"

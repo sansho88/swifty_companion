@@ -1,4 +1,4 @@
-package fr.tgriffit.swifty_companion
+package fr.tgriffit.swifty_companion.ui.main
 
 import fr.tgriffit.swifty_companion.data.model.SharedViewModel
 import android.content.res.ColorStateList
@@ -25,12 +25,11 @@ import com.google.gson.Gson
 import fr.tgriffit.swifty_companion.data.User
 import fr.tgriffit.swifty_companion.data.model.UserData
 import fr.tgriffit.swifty_companion.databinding.UserProfileBinding
-import fr.tgriffit.swifty_companion.ui.main.PageViewModel
-import fr.tgriffit.swifty_companion.ui.main.PlaceholderFragment
 import java.util.Locale
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import androidx.lifecycle.Observer
+import fr.tgriffit.swifty_companion.R
 
 
 private const val TAG = "UserProfileActivity"
@@ -243,8 +242,8 @@ class UserProfileFragment : Fragment() {
          * number.
          */
         @JvmStatic
-        fun newInstance(sectionNumber: Int): PlaceholderFragment {
-            return PlaceholderFragment().apply {
+        fun newInstance(sectionNumber: Int): UserProfileFragment {
+            return UserProfileFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_SECTION_NUMBER, sectionNumber)
                 }
