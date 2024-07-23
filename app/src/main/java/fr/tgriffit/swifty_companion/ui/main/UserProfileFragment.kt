@@ -56,30 +56,38 @@ class UserProfileFragment : Fragment() {
     lateinit var cursusSpinner: Spinner
     private var _binding: UserProfileBinding? = null
 
-    private lateinit var pageViewModel: PageViewModel
+    private lateinit var pageViewModel: SharedViewModel
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
     private val sharedViewModel: SharedViewModel by lazy { ViewModelProvider(this)[SharedViewModel::class.java] }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+  /*  override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        pageViewModel = ViewModelProvider(this).get(PageViewModel::class.java).apply {
+        Log.d("UserProfileFragment", "HELLO")
+        pageViewModel = ViewModelProvider(this).get(SharedViewModel::class.java).apply {
             setIndex(arguments?.getInt(ARG_SECTION_NUMBER) ?: 1)
         }
-    }
+    }*/
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        super.onCreate(savedInstanceState)
+    ): View {
         //setContentView(R.layout.user_profile)
+        Log.d("UserProfileFragment", "onCreateView: user : $user")
+        pageViewModel = ViewModelProvider(this).get(SharedViewModel::class.java).apply {
+            setIndex(arguments?.getInt(ARG_SECTION_NUMBER) ?: 1)
+        }
         _binding = UserProfileBinding.inflate(inflater, container, false)
         val root = binding.root
 
+        pageViewModel.user.observe(viewLifecycleOwner, Observer {
+            if (it != null)
+                updateUserData(it)
+        })
 
 
 

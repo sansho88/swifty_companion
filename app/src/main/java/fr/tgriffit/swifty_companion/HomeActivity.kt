@@ -29,20 +29,21 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityHomeBinding.bind(layoutInflater.inflate(R.layout.activity_home, null))
+        binding = ActivityHomeBinding.inflate(layoutInflater)
 
-        setContentView(binding.root) //fixme?: la barre de recherche et les onglets n'apparaissent pas en bas
+        setContentView(binding.root)
      //TODO: tuto sur les fragments https://developer.android.com/guide/fragments/create?hl=fr#kts
 
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
         sectionsPagerAdapter.addFragment(UserProfileFragment())
-        /*TODO
-        sectionsPagerAdapter.addFragment(ProjectsFragment(), "Projects")
+        //TODO
+       /* sectionsPagerAdapter.addFragment(ProjectsFragment(), "Projects")
         sectionsPagerAdapter.addFragment(SkillsFragment(), "Skills")*/
 
-        val viewPager: ViewPager = binding.viewPager
+       val viewPager: ViewPager = binding.viewPager
+        //fixme: Show the fragment not initialized
         viewPager.adapter = sectionsPagerAdapter
-        val tabs: TabLayout = binding.tabs
+         val tabs: TabLayout = binding.tabs
         tabs.setupWithViewPager(viewPager)
         if (token == null)
             token = IntentCompat.getParcelableExtra(intent, "token", Token::class.java)!!
