@@ -39,6 +39,9 @@ class HomeActivity : AppCompatActivity() {
         //TODO
        /* sectionsPagerAdapter.addFragment(ProjectsFragment(), "Projects")
         sectionsPagerAdapter.addFragment(SkillsFragment(), "Skills")*/
+        apiService = ApiService(token)
+        sharedViewModel.setApiService(apiService)
+
 
        val viewPager: ViewPager = binding.viewPager
         //fixme: Show the fragment not initialized
@@ -48,8 +51,7 @@ class HomeActivity : AppCompatActivity() {
         if (token == null)
             token = IntentCompat.getParcelableExtra(intent, "token", Token::class.java)!!
 
-        apiService = ApiService(token)
-        sharedViewModel.setApiService(apiService)
+
 
         val searchView = binding.searchUserSearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {

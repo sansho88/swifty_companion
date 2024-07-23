@@ -15,6 +15,7 @@ import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -30,6 +31,11 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import androidx.lifecycle.Observer
 import fr.tgriffit.swifty_companion.R
+import fr.tgriffit.swifty_companion.data.auth.ApiService
+
+import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
+
 
 
 private const val TAG = "UserProfileActivity"
@@ -56,12 +62,11 @@ class UserProfileFragment : Fragment() {
     lateinit var cursusSpinner: Spinner
     private var _binding: UserProfileBinding? = null
 
-    private lateinit var pageViewModel: SharedViewModel
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private val sharedViewModel: SharedViewModel by lazy { ViewModelProvider(this)[SharedViewModel::class.java] }
+    private val sharedViewModel: SharedViewModel by activityViewModels()//lazy { ViewModelProvider(this)[SharedViewModel::class.java] }
 
   /*  override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,13 +83,13 @@ class UserProfileFragment : Fragment() {
     ): View {
         //setContentView(R.layout.user_profile)
         Log.d("UserProfileFragment", "onCreateView: user : $user")
-        pageViewModel = ViewModelProvider(this).get(SharedViewModel::class.java).apply {
+        sharedViewModel.apply {
             setIndex(arguments?.getInt(ARG_SECTION_NUMBER) ?: 1)
         }
         _binding = UserProfileBinding.inflate(inflater, container, false)
         val root = binding.root
 
-        pageViewModel.user.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.user.observe(viewLifecycleOwner, Observer {
             if (it != null)
                 updateUserData(it)
         })
@@ -94,6 +99,21 @@ class UserProfileFragment : Fragment() {
         initUserProfileUIElements()
         cursusSpinner.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
         //cursusSpinner.findViewById<TextView>(android.R.id.text1).setTextColor(Color.WHITE)
+
+
+        /* searchBar.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
+             .setTextColor(Color.WHITE)
+         val searchBarEditText =
+             searchBar.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
+         searchBarEditText.filters = arrayOf(InputFilter.LengthFilter(MAX_LOGIN_LEN))*/
+
+
+        return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
 
         try {
             user = sharedViewModel.performSearch().user.value
@@ -133,14 +153,6 @@ class UserProfileFragment : Fragment() {
             }
 
         })
-        /* searchBar.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
-             .setTextColor(Color.WHITE)
-         val searchBarEditText =
-             searchBar.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
-         searchBarEditText.filters = arrayOf(InputFilter.LengthFilter(MAX_LOGIN_LEN))*/
-
-
-        return root
     }
 
     override fun onResume() {
@@ -250,7 +262,7 @@ class UserProfileFragment : Fragment() {
          * number.
          */
         @JvmStatic
-        fun newInstance(sectionNumber: Int): UserProfileFragment {
+        fun newInstance(sectionNumber: Int, api: ApiService): UserProfileFragment {
             return UserProfileFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_SECTION_NUMBER, sectionNumber)
