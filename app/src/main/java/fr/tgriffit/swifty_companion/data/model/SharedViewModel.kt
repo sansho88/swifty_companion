@@ -4,10 +4,13 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import fr.tgriffit.swifty_companion.data.User
 import fr.tgriffit.swifty_companion.data.auth.ApiService
+import kotlinx.coroutines.launch
+import kotlin.math.log
 
 class SharedViewModel : ViewModel() {
 
@@ -22,25 +25,28 @@ class SharedViewModel : ViewModel() {
     val result: LiveData<String?> = _result
     val apiService: LiveData<ApiService> = _apiService
 
-    fun setSearchQuery(query: String): SharedViewModel {
+    fun setSearchQuery(query: String): SharedViewModel  {
+        _searchQuery.postValue(query)
         _searchQuery.value = query
         return this
     }
     fun setResult(result: String?): SharedViewModel {
+        _result.postValue(result)
         _result.value = result
         return this
     }
     fun setUser(user: User): SharedViewModel {
+        _user.postValue(user)
         _user.value = user
         return this
     }
     fun setApiService(apiService: ApiService): SharedViewModel {
-        _apiService.value = apiService
+        _apiService.postValue(apiService)
         return this
     }
 
     fun setIndex(index: Int) {
-        _index.value = index
+        _index.postValue(index)
     }
 
     /**
@@ -74,7 +80,26 @@ class SharedViewModel : ViewModel() {
             Log.e("SharedViewModel", "performSearch: apiService is null")
             return this
         }
-        setResult(apiService.value!!.getAbout(searchQuery.value))
+        viewModelScope.launch {
+            val apiResult = apiService.value?.getAbout(searchQuery.value)
+            if (!apiResult.isNullOrEmpty())
+                setResult(apiResult)
+            else
+                setResult(null)
+        }
         return this
+    }
+
+    fun searchUser(login: String): User? {
+        this.setSearchQuery(apiService.value!!.request.userByLogin(login))
+        this.performSearch()
+        val usersResult = result.value
+        if (usersResult.isNullOrEmpty())
+            return null
+        val userResult = gson.fromJson(usersResult, Array<User>::class.java)[0]
+        this.setSearchQuery(apiService.value!!.request.userById(userResult.id))
+            .performSearch()
+
+        return getUserFromResult()
     }
 }

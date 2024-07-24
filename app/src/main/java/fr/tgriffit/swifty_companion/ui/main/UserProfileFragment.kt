@@ -116,7 +116,7 @@ class UserProfileFragment : Fragment() {
 
 
         try {
-            user = sharedViewModel.performSearch().user.value
+            user = sharedViewModel.user.value
             updateUserData(user!!)
         } catch (exception: Exception) {
             Log.e(TAG, "onCreate: ApiService().getMe: ", exception)
@@ -127,13 +127,13 @@ class UserProfileFragment : Fragment() {
         sharedViewModel.searchQuery.observe(viewLifecycleOwner, Observer { query ->
             if (isValidSearch(query, lastSearched)) {
                 lastSearched = query
-                val executor = Executors.newSingleThreadExecutor()
-                executor.execute { searchForUser(query) }
+                /*val executor = Executors.newSingleThreadExecutor()
+                executor.execute { searchForUser(query) }*/
 
                 Toast.makeText(requireContext(), "Fetching data...", Toast.LENGTH_SHORT).show()
                 //3secs are necessary...or there's a decalage between searches
-                if (executor.awaitTermination(3, TimeUnit.SECONDS))
-                    executor.shutdown()
+               /* if (executor.awaitTermination(3, TimeUnit.SECONDS))
+                    executor.shutdown()*/
 
                 user = sharedViewModel.user.value
                 if (user != null)
@@ -179,7 +179,7 @@ class UserProfileFragment : Fragment() {
             return
         }
         val users = gson.fromJson(newUser, Array<User>::class.java)
-        user = sharedViewModel.performSearch().getUserFromResult()
+        user = sharedViewModel.setUser(users[0]).performSearch().getUserFromResult()
 
         Log.d(TAG, "onSubmit: user : $user")
     }

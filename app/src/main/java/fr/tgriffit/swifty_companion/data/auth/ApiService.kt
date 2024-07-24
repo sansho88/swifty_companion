@@ -69,6 +69,8 @@ class ApiService() : AuthParams() {
     private var token: Token? = null
     private val executor = Executors.newSingleThreadExecutor() //for API calls!
 
+
+
     fun setToken(token: Token?) {
         if (token == null)
             Log.e(TAG, "[ApiService] The token to set is invalid")
@@ -121,10 +123,10 @@ class ApiService() : AuthParams() {
         val fullUrl = requestApi42Url + endPoint
 
         if (token == null)
-            throw RuntimeException("[CallApi] Invalid token")
+            throw RuntimeException("[CallApi] Invalid token\n[ApiService]=> ${toString()}")
 
         try {
-            val (_, _, result) = fullUrl.httpGet()
+            val (_, response, result) = fullUrl.httpGet()
                 .header("Authorization", "${token!!.token_type} ${token!!.access_token}")
                 .responseString()
 
@@ -137,7 +139,8 @@ class ApiService() : AuthParams() {
                 }
 
                 is Result.Failure -> {
-                    Log.e(TAG, "[FAILURE] callApi: ${result.error.message}")
+                    Log.e(TAG, "[FAILURE] callApi: ${result.error.message}" +
+                            "\n=>${response.responseMessage}")
                     null
                 }
             }
@@ -145,6 +148,10 @@ class ApiService() : AuthParams() {
             Log.e(TAG, "callApi: $exception")
         }
         return ""
+    }
+
+    override fun toString(): String {
+        return "ApiService(TAG='$TAG', requestApi42Url='$requestApi42Url', request=$request, token=$token)"
     }
 
 }
