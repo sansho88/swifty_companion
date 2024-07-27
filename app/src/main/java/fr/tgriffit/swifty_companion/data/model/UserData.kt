@@ -31,7 +31,7 @@ open class UserData(
     private val active: Boolean,
     private val groups: List<Any>,
     val cursus_users: List<CursusUser>,
-    private val projects_users: List<Any>,
+    private val projects_users: List<ProjectsUsers>,
     private val languages_users: List<LanguagesUser>,
     private val achievements: List<Any>,
     private val titles: List<Any>,
@@ -145,7 +145,7 @@ open class UserData(
         return patroning
     }
 
-    fun getProjectsUsers(): List<Any> {
+    fun getProjectsUsers(): List<ProjectsUsers> {
         return projects_users
     }
 
@@ -267,7 +267,11 @@ open class UserData(
         val userId: Int,
         val position: Int,
         val createdAt: String
-    )
+    ){
+        override fun toString(): String {
+            return "LanguagesUser(id=$id, languageId=$languageId, userId=$userId, position=$position, createdAt='$createdAt')"
+        }
+    }
 
     open class Patroned(
         val id: Int,
@@ -276,7 +280,11 @@ open class UserData(
         val ongoing: Boolean,
         val createdAt: String,
         val updatedAt: String
-    )
+    ){
+        override fun toString(): String {
+            return "Patroned(id=$id, userId=$userId, godfatherId=$godfatherId, ongoing=$ongoing, createdAt='$createdAt', updatedAt='$updatedAt')"
+        }
+    }
 
     open class ExpertisesUser(
         val id: Int,
@@ -286,7 +294,11 @@ open class UserData(
         val contactMe: Boolean,
         val createdAt: String,
         val userId: Int
-    )
+    ){
+        override fun toString(): String {
+            return "ExpertisesUser(id=$id, expertiseId=$expertiseId, interested=$interested, value=$value, contactMe=$contactMe, createdAt='$createdAt', userId=$userId)"
+        }
+    }
 
     open class Campus(
         val id: Int,
@@ -295,7 +307,11 @@ open class UserData(
         val language: Language,
         val usersCount: Int,
         val vogsphereId: Int
-    )
+    ){
+        override fun toString(): String {
+            return "Campus(id=$id, name='$name', timeZone='$timeZone', language=$language, usersCount=$usersCount, vogsphereId=$vogsphereId)"
+        }
+    }
 
     open class Language(
         val id: Int,
@@ -303,14 +319,53 @@ open class UserData(
         val identifier: String,
         val createdAt: String,
         val updatedAt: String
-    )
+    ){
+        override fun toString(): String {
+            return "Language(id=$id, name='$name', identifier='$identifier', createdAt='$createdAt', updatedAt='$updatedAt')"
+        }
+    }
 
     open class CampusUser(
         val id: Int,
         val userId: Int,
         val campusId: Int,
         val isPrimary: Boolean
-    )
+    ){
+        override fun toString(): String {
+            return "CampusUser(id=$id, userId=$userId, campusId=$campusId, isPrimary=$isPrimary)"
+        }
+    }
+
+    class ProjectsUsers (
+        val id: Int,
+        val occurrence: Int,
+        val final_mark: Int? =null,
+        val status: String,
+        val validated: Boolean? = null,
+        val current_team_id: Int? = null,
+        val project: Project,
+        val cursus_ids: List<Int>,
+        val marked_at: String? = null,
+        val marked: Boolean,
+        val retriable_at: String? = null,
+        val created_at: String,
+        val updated_at: String
+    ){
+        override fun toString(): String {
+            return "ProjectsUsers(id=$id, occurrence=$occurrence, final_mark=$final_mark, status='$status', validated=$validated, current_team_id=$current_team_id, project=$project, cursus_ids=$cursus_ids, marked_at=$marked_at, marked=$marked, retriable_at=$retriable_at, created_at='$created_at', updated_at='$updated_at')"
+        }
+    }
+
+    class Project (
+        val id: Double,
+        val name: String,
+        val slug: String,
+        val parent_id: Double? = null
+    ){
+        override fun toString(): String {
+            return "Project(id=$id, name='$name', slug='$slug', parent_id=$parent_id)"
+        }
+    }
 
 }
 

@@ -5,16 +5,28 @@
     android:orientation="horizontal">
 
     <TextView
-        android:id="@+id/item_number"
+        android:id="@+id/project_score_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
+        android:textColor="@android:color/background_light"
         android:textAppearance="?attr/textAppearanceListItem" />
 
     <TextView
-        android:id="@+id/content"
+        android:id="@+id/project_name_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
+        android:textColor="@color/white"
         android:textAppearance="?attr/textAppearanceListItem" />
+
+    <TextView
+        android:id="@+id/project_valid_date_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/text_margin"
+        android:textColor="@android:color/background_light"
+        android:textAppearance="?attr/textAppearanceListItem" />
+
+
 </LinearLayout>

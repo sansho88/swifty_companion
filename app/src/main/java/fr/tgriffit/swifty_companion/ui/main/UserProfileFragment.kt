@@ -17,6 +17,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.NonNull
+import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -45,8 +46,6 @@ class UserProfileFragment : Fragment() {
 
 
     private var user: User? = null
-    var currentCursus: UserData.CursusUser? = null
-    private val gson = Gson()
 
     private lateinit var userLogin: TextView
     private lateinit var userName: TextView

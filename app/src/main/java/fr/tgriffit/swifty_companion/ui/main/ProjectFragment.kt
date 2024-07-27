@@ -3,6 +3,7 @@ package fr.tgriffit.swifty_companion.ui.main
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,12 +14,12 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import fr.tgriffit.swifty_companion.R
 import fr.tgriffit.swifty_companion.data.model.SharedViewModel
 import fr.tgriffit.swifty_companion.data.model.UserData
 import fr.tgriffit.swifty_companion.databinding.FragmentProjectListBinding
 import fr.tgriffit.swifty_companion.ui.main.UserProfileFragment.Companion.ARG_SECTION_NUMBER
-import fr.tgriffit.swifty_companion.ui.main.placeholder.PlaceholderContent
 
 /**
  * A fragment representing a list of Items.
@@ -27,6 +28,8 @@ class ProjectFragment : Fragment() {
 
     private var columnCount = 1
     private lateinit var cursusSpinner: Spinner
+    private lateinit var adapter: MyProjectRecyclerViewAdapter
+    private lateinit var recyclerView: RecyclerView
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private var _binding: FragmentProjectListBinding? = null
 
@@ -51,17 +54,27 @@ class ProjectFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_project_list, container, false)
         val root = binding.root
 
-        cursusSpinner = binding.spinner //todo: show cursus in spinner
+        cursusSpinner = binding.spinner
 
         cursusSpinner.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
-        // Set the adapter
-        if (view is RecyclerView) {
-            with(view) {
-                layoutManager =  LinearLayoutManager(context)
-                adapter = MyProjectRecyclerViewAdapter(PlaceholderContent.ITEMS)
-            }
-        }
-        return view
+
+
+        recyclerView = binding.list
+        sharedViewModel.setProjectsList(sharedViewModel.user.value!!.getProjectsUsers())
+        //fixme: update sharedViewModel.projectsList with a SET on create
+        adapter = MyProjectRecyclerViewAdapter(sharedViewModel.projectsList.value)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        Log.d("ProjectFragment", "current cursus: ${sharedViewModel.currentCursus.value}")
+
+
+        sharedViewModel.user.observe(viewLifecycleOwner, Observer {
+            if (it != null)
+                changeProjectsList(it.cursus_users)
+        })
+
+
+        return root
     }
 
     private fun changeProjectsList(cursusUserList: List<UserData.CursusUser>) {
@@ -82,6 +95,9 @@ class ProjectFragment : Fragment() {
                 id: Long
             ) {
                 sharedViewModel.setCurrentCursus(cursusUserList[position])
+                Log.d("ProjectFragment", "onItemSelected: ${sharedViewModel.user.value!!.getProjectsUsers()}")
+                sharedViewModel.setProjectsList(sharedViewModel.user.value!!.getProjectsUsers())
+                Log.d("ProjectFragment", "current cursus: ${sharedViewModel.currentCursus.value}")
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
