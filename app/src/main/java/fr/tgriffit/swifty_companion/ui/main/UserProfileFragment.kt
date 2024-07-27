@@ -44,29 +44,26 @@ private const val TAG = "UserProfileActivity"
 class UserProfileFragment : Fragment() {
 
 
-    var user: User? = null
+    private var user: User? = null
     var currentCursus: UserData.CursusUser? = null
     private val gson = Gson()
-    val MAX_LOGIN_LEN = 8
 
-    lateinit var userLogin: TextView
-    lateinit var userName: TextView
-    lateinit var userLevel: TextView
-    lateinit var userGrade: TextView
-    lateinit var userEvalPoints: TextView
-    lateinit var userPosition: TextView
-
-    //lateinit var searchBar: SearchView
-    lateinit var userAvatar: ShapeableImageView
-    lateinit var userExpBar: ProgressBar
-    lateinit var cursusSpinner: Spinner
+    private lateinit var userLogin: TextView
+    private lateinit var userName: TextView
+    private lateinit var userLevel: TextView
+    private lateinit var userGrade: TextView
+    private lateinit var userEvalPoints: TextView
+    private lateinit var userPosition: TextView
+    private lateinit var userAvatar: ShapeableImageView
+    private lateinit var userExpBar: ProgressBar
+    private lateinit var cursusSpinner: Spinner
     private var _binding: UserProfileBinding? = null
 
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private val sharedViewModel: SharedViewModel by activityViewModels()//lazy { ViewModelProvider(this)[SharedViewModel::class.java] }
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
   /*  override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,8 +78,6 @@ class UserProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        //setContentView(R.layout.user_profile)
-        Log.d("UserProfileFragment", "onCreateView: user : $user")
         sharedViewModel.apply {
             setIndex(arguments?.getInt(ARG_SECTION_NUMBER) ?: 1)
         }
@@ -94,19 +89,8 @@ class UserProfileFragment : Fragment() {
                 updateUserData(it)
         })
 
-
-
         initUserProfileUIElements()
         cursusSpinner.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
-        //cursusSpinner.findViewById<TextView>(android.R.id.text1).setTextColor(Color.WHITE)
-
-
-        /* searchBar.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
-             .setTextColor(Color.WHITE)
-         val searchBarEditText =
-             searchBar.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
-         searchBarEditText.filters = arrayOf(InputFilter.LengthFilter(MAX_LOGIN_LEN))*/
-
 
         return root
     }
@@ -127,23 +111,16 @@ class UserProfileFragment : Fragment() {
         sharedViewModel.searchQuery.observe(viewLifecycleOwner, Observer { query ->
             if (isValidSearch(query, lastSearched)) {
                 lastSearched = query
-                /*val executor = Executors.newSingleThreadExecutor()
-                executor.execute { searchForUser(query) }*/
-
                 Toast.makeText(requireContext(), "Fetching data...", Toast.LENGTH_SHORT).show()
-                //3secs are necessary...or there's a decalage between searches
-               /* if (executor.awaitTermination(3, TimeUnit.SECONDS))
-                    executor.shutdown()*/
-
                 user = sharedViewModel.user.value
                 if (user != null)
                     binding.apply { updateUserData(user!!) }
                 else {
                     val snackbar =
-                        Snackbar.make(userName, "$query doesn't exist", Snackbar.LENGTH_SHORT)
+                        Snackbar.make(userName, "$query not found", Snackbar.LENGTH_SHORT)
                     snackbar.setTextColor(Color.WHITE)
                     snackbar.setBackgroundTint(
-                        getResources().getColor(
+                        resources.getColor(
                             android.R.color.holo_blue_dark,
                             Resources.getSystem().newTheme()
                         )
@@ -169,20 +146,6 @@ class UserProfileFragment : Fragment() {
         return true
     }
 
-    private fun searchForUser(login: String) {
-        //needed for request on ID and get ALL infos
-        val newUser = sharedViewModel.performSearch().result.value
-
-        if (newUser.isNullOrEmpty()) {
-            Log.e(TAG, "onQueryTextSubmit: user $login doesn't exist")
-            user = null
-            return
-        }
-        val users = gson.fromJson(newUser, Array<User>::class.java)
-        user = sharedViewModel.setUser(users[0]).performSearch().getUserFromResult()
-
-        Log.d(TAG, "onSubmit: user : $user")
-    }
 
     private fun updateUserLevel(level: Double) {
         userLevel.text = String.format(Locale.US, "Lvl: %,.2f %%", level)
@@ -197,7 +160,7 @@ class UserProfileFragment : Fragment() {
             cursus.map { it.cursus.name })
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         cursusSpinner.adapter = adapter
-        val level = currentCursus?.level ?: 0.0
+        val level = sharedViewModel.currentCursus.value?.level ?: 0.0
         updateUserLevel(level)
 
         cursusSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -207,8 +170,8 @@ class UserProfileFragment : Fragment() {
                 position: Int,
                 id: Long
             ) {
-                currentCursus = cursusUserList[position]
-                updateUserLevel(currentCursus?.level ?: 0.0)
+                sharedViewModel.setCurrentCursus(cursusUserList[position])
+                updateUserLevel(sharedViewModel.currentCursus.value?.level ?: 0.0)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -229,7 +192,7 @@ class UserProfileFragment : Fragment() {
                 updatedUser.getCorrectionPoint(),
                 if (updatedUser.getCorrectionPoint() <= 1 && updatedUser.getCorrectionPoint() >= -1) "" else "s"
             )
-        userPosition.text = updatedUser.location
+        userPosition.text = if(updatedUser.location.isNullOrEmpty()) "\uD83D\uDEB7" else updatedUser.location
 
         Glide.with(this)
             .load(updatedUser.image.link)
@@ -255,7 +218,7 @@ class UserProfileFragment : Fragment() {
          * The fragment argument representing the section number for this
          * fragment.
          */
-        private const val ARG_SECTION_NUMBER = "section_number"
+        const val ARG_SECTION_NUMBER = "section_number"
 
         /**
          * Returns a new instance of this fragment for the given section

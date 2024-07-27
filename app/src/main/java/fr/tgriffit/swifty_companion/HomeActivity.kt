@@ -16,6 +16,7 @@ import fr.tgriffit.swifty_companion.databinding.ActivityHomeBinding
 import androidx.activity.viewModels
 import com.google.gson.Gson
 import fr.tgriffit.swifty_companion.data.User
+import fr.tgriffit.swifty_companion.ui.main.ProjectFragment
 import fr.tgriffit.swifty_companion.ui.main.UserProfileFragment
 import java.util.concurrent.Executors
 
@@ -40,8 +41,8 @@ class HomeActivity : AppCompatActivity() {
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
         sectionsPagerAdapter.addFragment(UserProfileFragment())
         //TODO
-        /* sectionsPagerAdapter.addFragment(ProjectsFragment(), "Projects")
-         sectionsPagerAdapter.addFragment(SkillsFragment(), "Skills")*/
+         sectionsPagerAdapter.addFragment(ProjectFragment())
+        /* sectionsPagerAdapter.addFragment(SkillsFragment(), "Skills")*/
 
         token = IntentCompat.getParcelableExtra(intent, "token", Token::class.java)
         apiService = ApiService(token)

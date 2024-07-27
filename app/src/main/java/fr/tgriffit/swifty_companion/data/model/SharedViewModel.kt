@@ -20,10 +20,13 @@ class SharedViewModel : ViewModel() {
     private val _user = MutableLiveData<User>()
     private val _apiService = MutableLiveData<ApiService>()
     private val _index = MutableLiveData<Int>()
+    private val _currentCursus = MutableLiveData<UserData.CursusUser>()
     val searchQuery: LiveData<String> = _searchQuery
     val user: LiveData<User?> = _user
     val result: LiveData<String?> = _result
     val apiService: LiveData<ApiService> = _apiService
+    val index: LiveData<Int> = _index
+    val currentCursus: LiveData<UserData.CursusUser> = _currentCursus
 
     fun setSearchQuery(query: String): SharedViewModel  {
         _searchQuery.postValue(query)
@@ -47,6 +50,11 @@ class SharedViewModel : ViewModel() {
 
     fun setIndex(index: Int) {
         _index.postValue(index)
+    }
+
+    fun setCurrentCursus(cursus: UserData.CursusUser): SharedViewModel {
+        _currentCursus.value = cursus
+        return this
     }
 
     /**
