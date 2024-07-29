@@ -55,7 +55,6 @@ class UserProfileFragment : Fragment() {
     private lateinit var userPosition: TextView
     private lateinit var userAvatar: ShapeableImageView
     private lateinit var userExpBar: ProgressBar
-    private lateinit var cursusSpinner: Spinner
     private var _binding: UserProfileBinding? = null
 
 
@@ -87,10 +86,7 @@ class UserProfileFragment : Fragment() {
             if (it != null)
                 updateUserData(it)
         })
-
         initUserProfileUIElements()
-        cursusSpinner.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
-
         return root
     }
 
@@ -101,6 +97,8 @@ class UserProfileFragment : Fragment() {
         try {
             user = sharedViewModel.user.value
             updateUserData(user!!)
+            updateUserLevel(user!!.cursus_users.first().level)
+
         } catch (exception: Exception) {
             Log.e(TAG, "onCreate: ApiService().getMe: ", exception)
         }
@@ -129,6 +127,11 @@ class UserProfileFragment : Fragment() {
             }
 
         })
+
+        sharedViewModel.currentCursus.observe(viewLifecycleOwner, Observer {
+            updateUserLevel(it.level)
+        })
+
     }
 
     override fun onResume() {
@@ -151,33 +154,6 @@ class UserProfileFragment : Fragment() {
         userExpBar.progress = ((level - level.toInt()) * 100).toInt()
     }
 
-    private fun updateUserCursus(cursusUserList: List<UserData.CursusUser>) {
-        val cursus = cursusUserList
-        val adapter = ArrayAdapter(
-            requireContext(),
-            R.layout.cursus_spinner_item,
-            cursus.map { it.cursus.name })
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        cursusSpinner.adapter = adapter
-        val level = sharedViewModel.currentCursus.value?.level ?: 0.0
-        updateUserLevel(level)
-
-        cursusSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                sharedViewModel.setCurrentCursus(cursusUserList[position])
-                updateUserLevel(sharedViewModel.currentCursus.value?.level ?: 0.0)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-
-
-    }
 
     @NonNull
     private fun updateUserData(updatedUser: User = user!!) {
@@ -197,7 +173,6 @@ class UserProfileFragment : Fragment() {
             .load(updatedUser.image.link)
             .into(userAvatar)
 
-        updateUserCursus(updatedUser.cursus_users)
     }
 
     private fun initUserProfileUIElements() {
@@ -209,7 +184,6 @@ class UserProfileFragment : Fragment() {
         userPosition = binding.userPlaceConnectedText
         userAvatar = binding.userAvatar
         userExpBar = binding.expProgressBar
-        cursusSpinner = binding.spinner
     }
 
     companion object {

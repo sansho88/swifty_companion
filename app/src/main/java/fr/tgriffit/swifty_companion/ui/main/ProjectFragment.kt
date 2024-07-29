@@ -27,7 +27,6 @@ import fr.tgriffit.swifty_companion.ui.main.UserProfileFragment.Companion.ARG_SE
 class ProjectFragment : Fragment() {
 
     private var columnCount = 1
-    private lateinit var cursusSpinner: Spinner
     private lateinit var adapter: MyProjectRecyclerViewAdapter
     private lateinit var recyclerView: RecyclerView
     private val sharedViewModel: SharedViewModel by activityViewModels()
@@ -54,10 +53,6 @@ class ProjectFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_project_list, container, false)
         val root = binding.root
 
-        cursusSpinner = binding.spinner
-
-        cursusSpinner.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
-
 
         recyclerView = binding.list
         sharedViewModel.setProjectsList(sharedViewModel.user.value!!.getProjectsUsers())
@@ -67,43 +62,20 @@ class ProjectFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
         Log.d("ProjectFragment", "current cursus: ${sharedViewModel.currentCursus.value}")
 
+        sharedViewModel.projectsList.observe(viewLifecycleOwner, Observer {
+            adapter.notifyDataSetChanged()
+            adapter = MyProjectRecyclerViewAdapter(sharedViewModel.projectsList.value)
+            recyclerView.adapter = adapter
+            Log.d("ProjectFragment", "projectsList changed")
 
-        sharedViewModel.user.observe(viewLifecycleOwner, Observer {
-            if (it != null)
-                changeProjectsList(it.cursus_users)
         })
+
 
 
         return root
     }
 
-    private fun changeProjectsList(cursusUserList: List<UserData.CursusUser>) {
-        val cursus = cursusUserList
-        val adapter = ArrayAdapter(
-            requireContext(),
-            R.layout.cursus_spinner_item,
-            cursus.map { it.cursus.name })
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        cursusSpinner.adapter = adapter
 
-
-        cursusSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                sharedViewModel.setCurrentCursus(cursusUserList[position])
-                Log.d("ProjectFragment", "onItemSelected: ${sharedViewModel.user.value!!.getProjectsUsers()}")
-                sharedViewModel.setProjectsList(sharedViewModel.user.value!!.getProjectsUsers())
-                Log.d("ProjectFragment", "current cursus: ${sharedViewModel.currentCursus.value}")
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-
-    }
 
     companion object {
 

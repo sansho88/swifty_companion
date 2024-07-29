@@ -1,8 +1,14 @@
 package fr.tgriffit.swifty_companion
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import fr.tgriffit.swifty_companion.data.model.SharedViewModel
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.Toast
 import com.google.android.material.tabs.TabLayout
 import androidx.viewpager.widget.ViewPager
@@ -14,11 +20,11 @@ import fr.tgriffit.swifty_companion.data.auth.Token
 import fr.tgriffit.swifty_companion.ui.main.SectionsPagerAdapter
 import fr.tgriffit.swifty_companion.databinding.ActivityHomeBinding
 import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 import com.google.gson.Gson
-import fr.tgriffit.swifty_companion.data.User
+import fr.tgriffit.swifty_companion.data.model.UserData
 import fr.tgriffit.swifty_companion.ui.main.ProjectFragment
 import fr.tgriffit.swifty_companion.ui.main.UserProfileFragment
-import java.util.concurrent.Executors
 
 
 class HomeActivity : AppCompatActivity() {
@@ -27,6 +33,8 @@ class HomeActivity : AppCompatActivity() {
     private val gson = Gson()
 
     private lateinit var binding: ActivityHomeBinding
+    private lateinit var searchView : SearchView
+    private lateinit var cursusSpinner: Spinner
     lateinit var apiService: ApiService
     var token: Token? = null
     private val sharedViewModel: SharedViewModel by viewModels()
@@ -44,9 +52,12 @@ class HomeActivity : AppCompatActivity() {
          sectionsPagerAdapter.addFragment(ProjectFragment())
         /* sectionsPagerAdapter.addFragment(SkillsFragment(), "Skills")*/
 
+        cursusSpinner = binding.spinner
+        cursusSpinner.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
+
+
         token = IntentCompat.getParcelableExtra(intent, "token", Token::class.java)
         apiService = ApiService(token)
-
         sharedViewModel.setApiService(apiService)
         sharedViewModel.apiService.observe(this) {
             try {
@@ -55,6 +66,7 @@ class HomeActivity : AppCompatActivity() {
                 if (tmpUser != null) {
                     Log.d("HomeActivity", "onCreate: tmpUser : $tmpUser")
                     sharedViewModel.setUser(tmpUser)
+                    changeProjectsList(sharedViewModel.user.value!!.cursus_users)
                 } else
                     Log.e("HomeActivity", "onCreate: tmpUser is null")
                 sharedViewModel.performSearch()
@@ -72,11 +84,9 @@ class HomeActivity : AppCompatActivity() {
         if (token == null)
             token = IntentCompat.getParcelableExtra(intent, "token", Token::class.java)!!
 
-
-        val searchView = binding.searchUserSearchView
+        searchView = binding.searchUserSearchView
         var lastSearched: String = ""
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            // val executor = Executors.newSingleThreadExecutor()
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (!query.isNullOrEmpty() && lastSearched != query) {
                     Log.d("HomeActivity", "onQueryTextSubmit: $query")
@@ -93,6 +103,7 @@ class HomeActivity : AppCompatActivity() {
                     }
                     Log.d("HomeActivity", "result variable= ${sharedViewModel.result.value}")
                     sharedViewModel.setUser(user)
+                    changeProjectsList(user.cursus_users)
 
 
                 }
@@ -110,6 +121,36 @@ class HomeActivity : AppCompatActivity() {
                 return true
             }
         })
+
+
+
+
+    }
+
+    private fun changeProjectsList(cursusUserList: List<UserData.CursusUser>) {
+        val adapter = ArrayAdapter(
+            this,
+            R.layout.cursus_spinner_item,
+            cursusUserList.map { it.cursus.name })
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        cursusSpinner.adapter = adapter
+
+
+        cursusSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                sharedViewModel.setCurrentCursus(cursusUserList[position])
+                Log.d("ProjectFragment", "onItemSelected: ${sharedViewModel.user.value!!.getProjectsUsers()}")
+                sharedViewModel.setProjectsList(sharedViewModel.user.value!!.getProjectsUsers())
+                Log.d("ProjectFragment", "current cursus: ${sharedViewModel.currentCursus.value}")
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
 
     }
 }
