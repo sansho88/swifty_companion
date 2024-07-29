@@ -22,6 +22,7 @@ import fr.tgriffit.swifty_companion.databinding.ActivityHomeBinding
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
+import fr.tgriffit.swifty_companion.data.User
 import fr.tgriffit.swifty_companion.data.model.UserData
 import fr.tgriffit.swifty_companion.ui.main.ProjectFragment
 import fr.tgriffit.swifty_companion.ui.main.UserProfileFragment
@@ -35,6 +36,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var searchView : SearchView
     private lateinit var cursusSpinner: Spinner
+    private var user: User? = null
     lateinit var apiService: ApiService
     var token: Token? = null
     private val sharedViewModel: SharedViewModel by viewModels()
@@ -66,6 +68,7 @@ class HomeActivity : AppCompatActivity() {
                 if (tmpUser != null) {
                     Log.d("HomeActivity", "onCreate: tmpUser : $tmpUser")
                     sharedViewModel.setUser(tmpUser)
+                    user = tmpUser
                     changeProjectsList(sharedViewModel.user.value!!.cursus_users)
                 } else
                     Log.e("HomeActivity", "onCreate: tmpUser is null")
@@ -91,7 +94,7 @@ class HomeActivity : AppCompatActivity() {
                 if (!query.isNullOrEmpty() && lastSearched != query) {
                     Log.d("HomeActivity", "onQueryTextSubmit: $query")
                     lastSearched = query
-                    val user = sharedViewModel.searchUser(query)
+                    user = sharedViewModel.searchUser(query)
                     if (user == null){
                         Toast.makeText(
                             this@HomeActivity,
@@ -102,8 +105,8 @@ class HomeActivity : AppCompatActivity() {
                         return false
                     }
                     Log.d("HomeActivity", "result variable= ${sharedViewModel.result.value}")
-                    sharedViewModel.setUser(user)
-                    changeProjectsList(user.cursus_users)
+                    sharedViewModel.setUser(user!!)
+                    changeProjectsList(user!!.cursus_users)
 
 
                 }
@@ -145,7 +148,12 @@ class HomeActivity : AppCompatActivity() {
             ) {
                 sharedViewModel.setCurrentCursus(cursusUserList[position])
                 Log.d("ProjectFragment", "onItemSelected: ${sharedViewModel.user.value!!.getProjectsUsers()}")
-                sharedViewModel.setProjectsList(sharedViewModel.user.value!!.getProjectsUsers())
+                val cursusProjects =
+                sharedViewModel.setProjectsList(sharedViewModel.user.value!!.getProjectsUsers().filter { project ->
+                    project.cursus_ids.find { id ->
+                       id == cursusUserList[position].cursus_id
+                    } != null
+                })
                 Log.d("ProjectFragment", "current cursus: ${sharedViewModel.currentCursus.value}")
             }
 

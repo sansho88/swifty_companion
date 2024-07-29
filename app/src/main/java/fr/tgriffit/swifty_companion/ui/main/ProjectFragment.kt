@@ -63,7 +63,7 @@ class ProjectFragment : Fragment() {
         Log.d("ProjectFragment", "current cursus: ${sharedViewModel.currentCursus.value}")
 
         sharedViewModel.projectsList.observe(viewLifecycleOwner, Observer {
-            adapter.notifyDataSetChanged()
+           // adapter.notifyDataSetChanged()
             adapter = MyProjectRecyclerViewAdapter(sharedViewModel.projectsList.value)
             recyclerView.adapter = adapter
             Log.d("ProjectFragment", "projectsList changed")
