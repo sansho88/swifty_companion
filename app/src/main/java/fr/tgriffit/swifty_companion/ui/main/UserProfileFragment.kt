@@ -96,8 +96,8 @@ class UserProfileFragment : Fragment() {
 
         try {
             user = sharedViewModel.user.value
-            updateUserData(user!!)
-            updateUserLevel(user!!.cursus_users.first().level)
+            user?.let { updateUserData(it) }
+            user?.cursus_users?.first()?.level?.let { updateUserLevel(it) }
 
         } catch (exception: Exception) {
             Log.e(TAG, "onCreate: ApiService().getMe: ", exception)

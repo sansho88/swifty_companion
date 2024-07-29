@@ -1,5 +1,6 @@
 package fr.tgriffit.swifty_companion.ui.main
 
+import android.text.format.DateFormat
 import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
@@ -11,6 +12,9 @@ import fr.tgriffit.swifty_companion.data.model.UserData
 
 import fr.tgriffit.swifty_companion.ui.main.placeholder.PlaceholderContent.ProjectItem
 import fr.tgriffit.swifty_companion.databinding.FragmentProjectBinding
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.concurrent.TimeUnit
 
 /**
  * [RecyclerView.Adapter] that can display a [ProjectItem].
@@ -37,7 +41,19 @@ class MyProjectRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = projectsList!![position]
         holder.nameView.text = item.project.name
-        holder.validDateView.text = if (item.status == "finished") item.marked_at else item.status
+        var timeParsed: Long? = null
+        val startTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(item.created_at)
+        var finishedDate: String = ""
+        val today = Date()
+        val elapsedTime : Date?
+        if(item.marked_at != null){
+            timeParsed = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(item.marked_at)!!.time
+            finishedDate = DateFormat.format("dd/MM/yyyy", timeParsed).toString()
+            elapsedTime = Date(timeParsed - startTime!!.time)
+        }else
+            elapsedTime = Date(today.time - startTime!!.time)
+        Log.d("MyProjectRecyclerViewAdapt", "Elapsed time =>: ${elapsedTime.time}")
+        holder.validDateView.text = if (item.status == "finished") "$finishedDate (${TimeUnit.MILLISECONDS.toDays(elapsedTime.time)} days)" else "Since ${TimeUnit.MILLISECONDS.toDays(elapsedTime.time)} days"
         holder.scoreView.text = if (item.marked) item.final_mark.toString() else "??"
         val scoreColor = if (!item.marked) R.color.orange
         else when {
@@ -48,13 +64,7 @@ class MyProjectRecyclerViewAdapter(
     }
 
     //fixme: sharedViewModel.currentCursus == null
-    override fun getItemCount(): Int = projectsList/*?.filter { project ->
-        Log.d("MyProjectRecyclerViewAdapter", "getItemCount: ${sharedViewModel.currentCursus.value?.cursus_id}")
-        (project.cursus_ids.find { id ->
-            id == sharedViewModel.currentCursus.value?.cursus_id
-        } ?: 0) > 0
-
-    }*/?.size ?: 0
+    override fun getItemCount(): Int = projectsList?.size ?: 0
 
     inner class ViewHolder(binding: FragmentProjectBinding) :
         RecyclerView.ViewHolder(binding.root) {
