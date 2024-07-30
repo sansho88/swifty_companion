@@ -25,6 +25,7 @@ import com.google.gson.Gson
 import fr.tgriffit.swifty_companion.data.User
 import fr.tgriffit.swifty_companion.data.model.UserData
 import fr.tgriffit.swifty_companion.ui.main.ProjectFragment
+import fr.tgriffit.swifty_companion.ui.main.SkillsFragment
 import fr.tgriffit.swifty_companion.ui.main.UserProfileFragment
 
 
@@ -50,9 +51,9 @@ class HomeActivity : AppCompatActivity() {
 
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
         sectionsPagerAdapter.addFragment(UserProfileFragment())
-        //TODO
+
          sectionsPagerAdapter.addFragment(ProjectFragment())
-        /* sectionsPagerAdapter.addFragment(SkillsFragment(), "Skills")*/
+         sectionsPagerAdapter.addFragment(SkillsFragment())
 
         cursusSpinner = binding.spinner
         cursusSpinner.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
@@ -63,6 +64,7 @@ class HomeActivity : AppCompatActivity() {
         sharedViewModel.setApiService(apiService)
         sharedViewModel.apiService.observe(this) {
             try {
+                //fixme: Connexion trop lente => user null (crash)
                 sharedViewModel.setResult(sharedViewModel.apiService.value?.getAbout("me"))
                 val tmpUser = sharedViewModel.getUserFromResult()
                 if (tmpUser != null) {

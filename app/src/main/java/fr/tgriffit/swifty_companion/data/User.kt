@@ -28,7 +28,7 @@ class User(
     active: Boolean,
     groups: List<Any>,
     cursus_users: List<CursusUser>,
-    projects_users: List<Any>,
+    projects_users: List<ProjectsUsers>,
     languages_users: List<LanguagesUser>,
     achievements: List<Any>,
     titles: List<Any>,

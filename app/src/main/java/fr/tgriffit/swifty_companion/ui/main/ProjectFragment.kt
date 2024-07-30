@@ -1,7 +1,6 @@
 package fr.tgriffit.swifty_companion.ui.main
 
-import android.content.res.ColorStateList
-import android.graphics.Color
+
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,14 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import fr.tgriffit.swifty_companion.R
 import fr.tgriffit.swifty_companion.data.model.SharedViewModel
-import fr.tgriffit.swifty_companion.data.model.UserData
 import fr.tgriffit.swifty_companion.databinding.FragmentProjectListBinding
 import fr.tgriffit.swifty_companion.ui.main.UserProfileFragment.Companion.ARG_SECTION_NUMBER
 

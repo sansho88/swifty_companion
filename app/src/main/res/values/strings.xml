@@ -23,4 +23,6 @@
     <string name="tab_text_3">Skills</string>
     <string name="view_pager_desc">User data</string>
     <string name="tabs_desc">Profile, Projects, Skills</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

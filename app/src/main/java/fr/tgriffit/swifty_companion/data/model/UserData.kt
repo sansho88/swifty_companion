@@ -229,7 +229,7 @@ open class UserData(
         val endAt: String?,
         val grade: String?,
         val level: Double,
-        val skills: List<Any>,
+        val skills: List<Skill>,
         val cursus_id: Int,
         val has_coalition: Boolean,
         val user: UserX,
@@ -239,6 +239,16 @@ open class UserData(
     ) {
         override fun toString(): String {
             return "CursusUser(id=$id, beginAt='$beginAt', endAt=$endAt, grade=$grade, level=$level, skills=$skills, cursus_id=$cursus_id, has_coalition=$has_coalition, user=$user, cursus=$cursus)"
+        }
+    }
+
+    open class Skill (
+        val id: Double,
+        val name: String,
+        val level: Double
+    ){
+        override fun toString(): String {
+            return "Skill(id=$id, name='$name', level=$level)"
         }
     }
 

@@ -14,6 +14,7 @@ import fr.tgriffit.swifty_companion.ui.main.placeholder.PlaceholderContent.Proje
 import fr.tgriffit.swifty_companion.databinding.FragmentProjectBinding
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 /**
@@ -42,12 +43,12 @@ class MyProjectRecyclerViewAdapter(
         val item = projectsList!![position]
         holder.nameView.text = item.project.name
         var timeParsed: Long? = null
-        val startTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(item.created_at)
+        val startTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).parse(item.created_at)
         var finishedDate: String = ""
         val today = Date()
         val elapsedTime : Date?
         if(item.marked_at != null){
-            timeParsed = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(item.marked_at)!!.time
+            timeParsed = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).parse(item.marked_at)!!.time
             finishedDate = DateFormat.format("dd/MM/yyyy", timeParsed).toString()
             elapsedTime = Date(timeParsed - startTime!!.time)
         }else
