@@ -90,19 +90,20 @@ class SharedViewModel : ViewModel() {
      * Perform a search on the API.
      * The result is stored in the result variable.
      */
-    fun performSearch(): SharedViewModel {
+    fun performSearch(): ApiService.ResponseApi? {
         if (!apiService.isInitialized) {
             Log.e("SharedViewModel", "performSearch: apiService is null")
-            return this
+            return ApiService.ResponseApi(-1, "apiService is null")
         }
+        var apiResult : ApiService.ResponseApi?= ApiService.ResponseApi(-1, "Result not get yet")
         viewModelScope.launch {
-            val apiResult = apiService.value?.getAbout(searchQuery.value)
-            if (!apiResult.isNullOrEmpty())
-                setResult(apiResult)
+            apiResult = apiService.value?.getAbout(searchQuery.value)
+            if (apiResult != null && apiResult!!.success != null)
+                setResult(apiResult!!.success!!.result)
             else
                 setResult(null)
         }
-        return this
+        return apiResult
     }
 
     fun searchUser(login: String): User? {

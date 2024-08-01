@@ -1,5 +1,6 @@
 package fr.tgriffit.swifty_companion
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import fr.tgriffit.swifty_companion.data.model.SharedViewModel
@@ -8,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.Toast
 import com.google.android.material.tabs.TabLayout
@@ -35,8 +37,10 @@ class HomeActivity : AppCompatActivity() {
     private val gson = Gson()
 
     private lateinit var binding: ActivityHomeBinding
-    private lateinit var searchView : SearchView
+    private lateinit var searchView: SearchView
     private lateinit var cursusSpinner: Spinner
+    private lateinit var meButton: ImageButton
+    private lateinit var logoutButton: ImageButton
     private var user: User? = null
     lateinit var apiService: ApiService
     var token: Token? = null
@@ -52,32 +56,35 @@ class HomeActivity : AppCompatActivity() {
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
         sectionsPagerAdapter.addFragment(UserProfileFragment())
 
-         sectionsPagerAdapter.addFragment(ProjectFragment())
-         sectionsPagerAdapter.addFragment(SkillsFragment())
+        sectionsPagerAdapter.addFragment(ProjectFragment())
+        sectionsPagerAdapter.addFragment(SkillsFragment())
 
         cursusSpinner = binding.spinner
         cursusSpinner.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
+        meButton = binding.meButton
+        logoutButton = binding.logoutButton
 
 
         token = IntentCompat.getParcelableExtra(intent, "token", Token::class.java)
         apiService = ApiService(token)
         sharedViewModel.setApiService(apiService)
-        sharedViewModel.apiService.observe(this) {
-            try {
-                //fixme: Connexion trop lente => user null (crash)
-                sharedViewModel.setResult(sharedViewModel.apiService.value?.getAbout("me"))
-                val tmpUser = sharedViewModel.getUserFromResult()
-                if (tmpUser != null) {
-                    Log.d("HomeActivity", "onCreate: tmpUser : $tmpUser")
-                    sharedViewModel.setUser(tmpUser)
-                    user = tmpUser
-                    changeProjectsList(sharedViewModel.user.value!!.cursus_users)
-                } else
-                    Log.e("HomeActivity", "onCreate: tmpUser is null")
-                sharedViewModel.performSearch()
-            } catch (e: Exception) {
-                Log.e(TAG, "onCreate: ApiService().getMe: ", e)
-            }
+        sharedViewModel.apiService.observe(this, apiServiceObserver())
+        meButton.setOnClickListener {
+            Toast.makeText(this, "Fetching data...", Toast.LENGTH_SHORT).show()
+            val responseApi = sharedViewModel.apiService.value?.getAbout("me")
+            if (responseApi?.success != null)
+                sharedViewModel.setResult(responseApi.success!!.result)
+            val me = sharedViewModel.getUserFromResult()
+            searchView.setQuery(me!!.getLogin(), true)
+            searchView.clearFocus()
+            searchView.setQuery("", false)
+        }
+        logoutButton.setOnClickListener {
+            val loginIntent = Intent(this, LoginActivity::class.java)
+            apiService.logout()
+            user = null
+            startActivity(loginIntent)
+            finish()
         }
 
 
@@ -86,6 +93,7 @@ class HomeActivity : AppCompatActivity() {
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = binding.tabs
         tabs.setupWithViewPager(viewPager)
+        tabs.setSelectedTabIndicatorColor(Color.parseColor("#2561B4"))
         if (token == null)
             token = IntentCompat.getParcelableExtra(intent, "token", Token::class.java)!!
 
@@ -94,29 +102,29 @@ class HomeActivity : AppCompatActivity() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (!query.isNullOrEmpty() && lastSearched != query) {
-                    Log.d("HomeActivity", "onQueryTextSubmit: $query")
+                    Toast.makeText(this@HomeActivity, "Fetching data...", Toast.LENGTH_SHORT).show()
+
                     lastSearched = query
                     user = sharedViewModel.searchUser(query)
-                    if (user == null){
+                    if (user == null) {
                         Toast.makeText(
                             this@HomeActivity,
                             "$query doesn't exist",
                             Toast.LENGTH_SHORT
                         ).show()
-                        Log.d("HomeActivity", "onQueryTextSubmit: result is null")
+                        Log.d("HomeActivity", "onQueryTextSubmit: ${sharedViewModel.apiService.value?.lastResponseApi?.failure?.message}")
                         return false
                     }
                     Log.d("HomeActivity", "result variable= ${sharedViewModel.result.value}")
                     sharedViewModel.setUser(user!!)
                     changeProjectsList(user!!.cursus_users)
-
-
+                    searchView.clearFocus()
                 }
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText?.length == MAX_LOGIN_LEN)
+                if (newText != null && newText.length > MAX_LOGIN_LEN)
                     Toast.makeText(
                         this@HomeActivity,
                         "A login can't be bigger",
@@ -127,9 +135,36 @@ class HomeActivity : AppCompatActivity() {
             }
         })
 
+    }
 
+    private fun apiServiceObserver(): Observer<ApiService> {
+        val observer = Observer<ApiService> {
+            try {
+                val me = sharedViewModel.apiService.value?.getAbout("me")
+                if (me?.success != null)
+                    sharedViewModel.setResult(me.success!!.result)
+                else {
+                    Toast.makeText(this, "Connection error", Toast.LENGTH_SHORT).show()
+                    val loginIntent = Intent(this, LoginActivity::class.java)
+                    startActivity(loginIntent)
+                    finish()
+                }
+                val tmpUser = sharedViewModel.getUserFromResult()
+                if (tmpUser != null) {
+                    sharedViewModel.setUser(tmpUser)
+                    user = tmpUser
+                    changeProjectsList(sharedViewModel.user.value!!.cursus_users)
+                } else
+                    Log.e("HomeActivity", "onCreate: tmpUser is null")
+                val searchResult = sharedViewModel.performSearch()
+                /*if (searchResult?.failure != null)
+                    Toast.makeText(this, searchResult.failure!!.message, Toast.LENGTH_SHORT).show()*/
 
-
+            } catch (e: Exception) {
+                Log.e(TAG, "onCreate: ApiService().getMe: ", e)
+            }
+        }
+        return observer
     }
 
     private fun changeProjectsList(cursusUserList: List<UserData.CursusUser>) {
@@ -149,13 +184,17 @@ class HomeActivity : AppCompatActivity() {
                 id: Long
             ) {
                 sharedViewModel.setCurrentCursus(cursusUserList[position])
-                Log.d("ProjectFragment", "onItemSelected: ${sharedViewModel.user.value!!.getProjectsUsers()}")
+                Log.d(
+                    "ProjectFragment",
+                    "onItemSelected: ${sharedViewModel.user.value!!.getProjectsUsers()}"
+                )
                 val cursusProjects =
-                sharedViewModel.setProjectsList(sharedViewModel.user.value!!.getProjectsUsers().filter { project ->
-                    project.cursus_ids.find { id ->
-                       id == cursusUserList[position].cursus_id
-                    } != null
-                })
+                    sharedViewModel.setProjectsList(
+                        sharedViewModel.user.value!!.getProjectsUsers().filter { project ->
+                            project.cursus_ids.find { id ->
+                                id == cursusUserList[position].cursus_id
+                            } != null
+                        })
                 Log.d("ProjectFragment", "current cursus: ${sharedViewModel.currentCursus.value}")
             }
 

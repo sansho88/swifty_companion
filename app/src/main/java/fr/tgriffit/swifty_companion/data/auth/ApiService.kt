@@ -4,8 +4,10 @@ import android.util.Log
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
+import com.google.android.gms.common.api.Response
 import com.google.gson.Gson
 import io.github.cdimascio.dotenv.dotenv
+import okhttp3.internal.notify
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.Exception
@@ -16,12 +18,13 @@ open class AuthParams() {
         filename = "env" // instead of '.env', use 'env'
         ignoreIfMissing = true
     }
-    val clientId: String = dotenv["UID"] //add your client id
-    protected val clientSecret = dotenv["SECRET"] //add your client secret
+    val clientId: String = dotenv["UID"]
+    protected val clientSecret = dotenv["SECRET"]
+
 
     val redirectUri =
         "myapp://callback/"//add your redirect uri ( https://www.oauth.com/oauth2-servers/redirect-uris/redirect-uris-native-apps/ )
-    protected val get42TokenUrl = "https://api.intra.42.fr/oauth/token" // url to get the token
+    protected val get42TokenUrl = "https://api.intra.42.fr/oauth/token"
 
 }
 
@@ -67,9 +70,7 @@ class ApiService() : AuthParams() {
     protected val requestApi42Url = "https://api.intra.42.fr/v2/"
     val request = Request()
     private var token: Token? = null
-    private val executor = Executors.newSingleThreadExecutor() //for API calls!
-
-
+    var lastResponseApi: ResponseApi? = null
 
     fun setToken(token: Token?) {
         if (token == null)
@@ -107,19 +108,27 @@ class ApiService() : AuthParams() {
         }
     }
 
-    fun getAbout(info: String?): String? {
-        var result: String? = null
+    fun getAbout(info: String?): ResponseApi {
+        var result: ResponseApi = ResponseApi(code = 0, value = "")
+        val executor = Executors.newSingleThreadExecutor() //for API calls!
+
         if (info.isNullOrEmpty())
-            return null
+            return ResponseApi(code = 404, value = "")
         executor.execute {
             result = callApi(info)
+            executor.shutdown()
         }
-        if (executor.awaitTermination(1, TimeUnit.SECONDS)) //attention au reseau...
+        if (executor.awaitTermination(10, TimeUnit.SECONDS)) //attention au reseau...
+        {
+            lastResponseApi = result
             return result
+        }
+        lastResponseApi = result
         return result
     }
 
-    private fun callApi(endPoint: String): String? {
+    var nbTries = 0
+    private fun callApi(endPoint: String): ResponseApi {
         val fullUrl = requestApi42Url + endPoint
 
         if (token == null)
@@ -132,26 +141,85 @@ class ApiService() : AuthParams() {
 
             return when (result) {
                 is Result.Success -> {
+                    nbTries = 0
                     if (result.value == "[]")
-                        ""
+                        ResponseApi(value = "")
                     else
-                        result.value
+                        ResponseApi(value = result.value)
                 }
 
                 is Result.Failure -> {
-                    Log.e(TAG, "[FAILURE] callApi: ${result.error.message}" +
-                            "\n=>${response.responseMessage}")
-                    null
+                    Log.e(
+                        TAG, "[FAILURE] callApi: ${result.error.message}" +
+                                "\n=>${response.responseMessage}"
+                    )
+                    if (response.statusCode == 401 && nbTries < 1) {
+                        refreshToken()
+                        callApi(endPoint)
+                        ++nbTries
+                    }
+                    ResponseApi(code = response.statusCode, value = response.responseMessage)
                 }
             }
         } catch (exception: Exception) {
             Log.e(TAG, "callApi: $exception")
         }
-        return ""
+        nbTries = 0
+        return ResponseApi(code = -1, value = "Unknown error")
     }
 
     override fun toString(): String {
         return "ApiService(TAG='$TAG', requestApi42Url='$requestApi42Url', request=$request, token=$token)"
     }
 
+    private fun refreshToken(){
+        val (_, _, result) = get42TokenUrl.httpPost(
+            listOf(
+                "grant_type" to "refresh_token",
+                "client_id" to clientId,
+                "client_secret" to clientSecret,
+                "refresh_token" to token?.refresh_token,
+            )
+        ).responseString()
+        val parser = Gson()
+
+        when (result) {
+
+            is Result.Success -> {
+                this.token = parser.fromJson<Token>(result.value, Token::class.java)
+                Log.d(TAG, "Token refreshed")
+            }
+
+            is Result.Failure -> {
+                Log.e(TAG, "Impossible to refresh the token")
+                throw RuntimeException("\n[ApiService]${result.error}")
+            }
+        }
+
+    }
+
+    fun logout() {
+        token = null
+        lastResponseApi = null
+    }
+
+    class ResponseApi(code: Int = 0, value: String) {
+        var failure: Failure? = null
+        var success: Success? = null
+
+        class Failure(code: Int, message: String) {
+            val code: Int = code
+            val message: String = message
+        }
+
+        class Success(val result: String) {
+        }
+
+        init {
+            if (code == 0)
+                success = Success(value)
+            else
+                failure = Failure(code, value)
+        }
+    }
 }

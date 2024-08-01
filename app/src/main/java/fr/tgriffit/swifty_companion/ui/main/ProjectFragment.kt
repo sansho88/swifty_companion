@@ -50,8 +50,8 @@ class ProjectFragment : Fragment() {
 
 
         recyclerView = binding.list
-        sharedViewModel.setProjectsList(sharedViewModel.user.value!!.getProjectsUsers())
-        //fixme: update sharedViewModel.projectsList with a SET on create
+        if (sharedViewModel.user.value != null && sharedViewModel.projectsList.value != null)
+            sharedViewModel.setProjectsList(sharedViewModel.user.value!!.getProjectsUsers())
         adapter = MyProjectRecyclerViewAdapter(sharedViewModel.projectsList.value)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)

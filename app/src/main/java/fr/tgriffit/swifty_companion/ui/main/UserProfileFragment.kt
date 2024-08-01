@@ -1,7 +1,6 @@
 package fr.tgriffit.swifty_companion.ui.main
 
 import fr.tgriffit.swifty_companion.data.model.SharedViewModel
-import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
@@ -9,32 +8,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.ProgressBar
-import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.annotation.NonNull
-import androidx.core.view.size
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
-import com.google.gson.Gson
 import fr.tgriffit.swifty_companion.data.User
-import fr.tgriffit.swifty_companion.data.model.UserData
 import fr.tgriffit.swifty_companion.databinding.UserProfileBinding
 import java.util.Locale
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 import androidx.lifecycle.Observer
 import fr.tgriffit.swifty_companion.R
 import fr.tgriffit.swifty_companion.data.auth.ApiService
 
-import androidx.fragment.app.viewModels
 import androidx.fragment.app.activityViewModels
 
 
@@ -108,7 +96,6 @@ class UserProfileFragment : Fragment() {
         sharedViewModel.searchQuery.observe(viewLifecycleOwner, Observer { query ->
             if (isValidSearch(query, lastSearched)) {
                 lastSearched = query
-                Toast.makeText(requireContext(), "Fetching data...", Toast.LENGTH_SHORT).show()
                 user = sharedViewModel.user.value
                 if (user != null)
                     binding.apply { updateUserData(user!!) }
@@ -168,6 +155,8 @@ class UserProfileFragment : Fragment() {
                 if (updatedUser.getCorrectionPoint() <= 1 && updatedUser.getCorrectionPoint() >= -1) "" else "s"
             )
         userPosition.text = if(updatedUser.location.isNullOrEmpty()) "\uD83D\uDEB7" else updatedUser.location
+
+       // val avatarUrl = updatedUser.image.link.ifEmpty { R.drawable.cat.toString() }
 
         Glide.with(this)
             .load(updatedUser.image.link)

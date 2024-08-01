@@ -16,14 +16,16 @@ data class Token(
     var token_type: String = "Bearer",
     var expires_in: Number,
     var scope: String = "Public",
-    var created_at : Int = 0
+    var created_at : Int = 0,
+    var refresh_token: String = "null"
     ) : Parcelable{
     constructor(parcel: Parcel) : this(
         parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readLong(),
         parcel.readString().toString(),
-        parcel.readInt()
+        parcel.readInt(),
+        parcel.readString().toString()
     ) {}
 
     override fun toString(): String {
@@ -31,7 +33,8 @@ data class Token(
                 "token_type='$token_type', \n" +
                 "expires_in=$expires_in, \n" +
                 "scope='$scope', \n" +
-                "created_at=$created_at)"
+                "created_at=$created_at" +
+                "refresh_token='$refresh_token')"
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -40,6 +43,7 @@ data class Token(
         parcel.writeLong(expires_in.toLong())
         parcel.writeString(scope)
         parcel.writeInt(created_at)
+        parcel.writeString(refresh_token)
     }
 
     override fun describeContents(): Int {

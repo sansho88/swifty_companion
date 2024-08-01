@@ -53,7 +53,6 @@ class MyProjectRecyclerViewAdapter(
             elapsedTime = Date(timeParsed - startTime!!.time)
         }else
             elapsedTime = Date(today.time - startTime!!.time)
-        Log.d("MyProjectRecyclerViewAdapt", "Elapsed time =>: ${elapsedTime.time}")
         holder.validDateView.text = if (item.status == "finished") "$finishedDate (${TimeUnit.MILLISECONDS.toDays(elapsedTime.time)} days)" else "Since ${TimeUnit.MILLISECONDS.toDays(elapsedTime.time)} days"
         holder.scoreView.text = if (item.marked) item.final_mark.toString() else "??"
         val scoreColor = if (!item.marked) R.color.orange

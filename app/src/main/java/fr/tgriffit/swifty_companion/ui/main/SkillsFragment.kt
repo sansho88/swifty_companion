@@ -57,12 +57,14 @@ class SkillsFragment : Fragment() {
         skills = sharedViewModel.currentCursus.value!!.skills
 
         setupRadarChart()
-        setData(skills!!)
+        if (skills != null)
+            setData(skills!!)
 
         sharedViewModel.currentCursus.observe(viewLifecycleOwner) {
-            setData(it.skills)
-            radarChart.notifyDataSetChanged()
-            Log.d("SkillsFragment", "skills -> ${it.skills}")
+            if (skills != null) {
+                setData(it.skills)
+                radarChart.notifyDataSetChanged()
+            }
         }
 
         return root
@@ -79,10 +81,21 @@ class SkillsFragment : Fragment() {
     }
 
     private fun setData(skillsList: List<UserData.Skill>) {
+        if (skillsList.isEmpty()) {
+            radarChart.clear()
+            return
+        }
         val entries = ArrayList<RadarEntry>()
+        var longuestLen = 0
         for (skill in skillsList) {
             val entry = RadarEntry(skill.level.toFloat())
-            entry.data = skill.name
+            var skillName = skill.name
+            longuestLen = longuestLen.coerceAtLeast(skillName.length)
+            if (skillName.length > 22) {
+                skillName = skillName.substring(0, 22) + ".."
+                longuestLen = 22
+            }
+            entry.data = skillName
             entry.icon = null
             entries.add(entry)
         }
@@ -114,7 +127,7 @@ class SkillsFragment : Fragment() {
         radarChart.invalidate()
 
         val xAxis = radarChart.xAxis
-        xAxis.textSize = 12f
+        xAxis.textSize = 24f - (longuestLen / 2).toFloat()
         xAxis.textColor = Color.WHITE
         xAxis.yOffset = 0f
         xAxis.xOffset = 0f
