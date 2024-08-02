@@ -1,0 +1,4 @@
+UID=
+SECRET=
+#rename into "env" without dot. ".env" will doesn't work.
+# Infos found on profile intra
