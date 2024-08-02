@@ -28,7 +28,8 @@
             android:name=".HomeActivity"
             android:exported="false"
             android:label="@string/title_activity_home"
-            android:theme="@style/Theme.Swifty_companion.NoActionBar" />
+            android:theme="@style/Theme.Swifty_companion.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".LoginActivity"
             android:exported="true">

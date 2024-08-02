@@ -3,6 +3,7 @@ package fr.tgriffit.swifty_companion.ui.main
 import fr.tgriffit.swifty_companion.data.model.SharedViewModel
 import android.content.res.Resources
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -20,11 +20,11 @@ import fr.tgriffit.swifty_companion.data.User
 import fr.tgriffit.swifty_companion.databinding.UserProfileBinding
 import java.util.Locale
 import androidx.lifecycle.Observer
-import fr.tgriffit.swifty_companion.R
 import fr.tgriffit.swifty_companion.data.auth.ApiService
 
 import androidx.fragment.app.activityViewModels
-
+import fr.tgriffit.swifty_companion.R
+import okio.Path.Companion.toPath
 
 
 private const val TAG = "UserProfileActivity"
@@ -43,6 +43,7 @@ class UserProfileFragment : Fragment() {
     private lateinit var userPosition: TextView
     private lateinit var userAvatar: ShapeableImageView
     private lateinit var userExpBar: ProgressBar
+    private lateinit var userCampus: TextView
     private var _binding: UserProfileBinding? = null
 
 
@@ -50,14 +51,6 @@ class UserProfileFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
     private val sharedViewModel: SharedViewModel by activityViewModels()
-
-  /*  override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d("UserProfileFragment", "HELLO")
-        pageViewModel = ViewModelProvider(this).get(SharedViewModel::class.java).apply {
-            setIndex(arguments?.getInt(ARG_SECTION_NUMBER) ?: 1)
-        }
-    }*/
 
 
     override fun onCreateView(
@@ -121,10 +114,6 @@ class UserProfileFragment : Fragment() {
 
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     private fun isValidSearch(login: String?, lastSearched: String): Boolean {
         if (login.isNullOrEmpty() || login.isBlank())
             return false
@@ -155,11 +144,16 @@ class UserProfileFragment : Fragment() {
                 if (updatedUser.getCorrectionPoint() <= 1 && updatedUser.getCorrectionPoint() >= -1) "" else "s"
             )
         userPosition.text = if(updatedUser.location.isNullOrEmpty()) "\uD83D\uDEB7" else updatedUser.location
+        val primaryCampusId = updatedUser.getCampusUsers().find { it.is_primary }?.campus_id
+        userCampus.text = getString(
+            R.string.campusTxt,
+            updatedUser.getCampus().find { it.id == primaryCampusId }?.name ?: "No campus"
+        )
 
-       // val avatarUrl = updatedUser.image.link.ifEmpty { R.drawable.cat.toString() }
+        val avatarUrl = updatedUser.image.link ?: Uri.parse("android.resource://fr.tgriffit.swifty_companion/drawable/cat").toString()
 
         Glide.with(this)
-            .load(updatedUser.image.link)
+            .load(avatarUrl)
             .into(userAvatar)
 
     }
@@ -173,6 +167,7 @@ class UserProfileFragment : Fragment() {
         userPosition = binding.userPlaceConnectedText
         userAvatar = binding.userAvatar
         userExpBar = binding.expProgressBar
+        userCampus = binding.userCampusText
     }
 
     companion object {

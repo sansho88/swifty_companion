@@ -1,11 +1,13 @@
 package fr.tgriffit.swifty_companion.ui.main
 
+import android.content.res.ColorStateList
 import android.text.format.DateFormat
 import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.graphics.alpha
 import fr.tgriffit.swifty_companion.R
 import fr.tgriffit.swifty_companion.data.model.SharedViewModel
 import fr.tgriffit.swifty_companion.data.model.UserData
@@ -58,9 +60,17 @@ class MyProjectRecyclerViewAdapter(
         val scoreColor = if (!item.marked) R.color.orange
         else when {
             item.final_mark!! >= 50 -> R.color.light_green
-            else -> R.color.light_red
+            else -> R.color.red
+        }
+        val backgroundColor = when(scoreColor){
+            R.color.light_green -> R.color.trans_green
+            R.color.red -> R.color.trans_red
+            else -> R.color.trans_orange
         }
         holder.scoreView.setTextColor(holder.itemView.context.getColor(scoreColor))
+        holder.itemView.context.getColor(scoreColor)
+        holder.itemView.backgroundTintList = ColorStateList.valueOf(holder.itemView.context.getColor(backgroundColor))
+
     }
 
     //fixme: sharedViewModel.currentCursus == null

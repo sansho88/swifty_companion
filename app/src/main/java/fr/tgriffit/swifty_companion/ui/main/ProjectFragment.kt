@@ -40,7 +40,7 @@ class ProjectFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         sharedViewModel.apply {
             setIndex(arguments?.getInt(ARG_SECTION_NUMBER) ?: 2)
         }

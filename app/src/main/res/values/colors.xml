@@ -3,11 +3,16 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="blue_ben_dark">#2561B4</color>
+    <color name="blue_ben_darker">#072F67</color>
     <color name="blue_ben_light">#1275FF</color>
     <color name="light_green">#00A524</color>
+    <color name="trans_green">#3600A524</color>
     <color name="light_red">#FF0000</color>
+    <color name="red">#FA3D3D</color>
+    <color name="trans_red">#36FA3D3D</color>
     <color name="dark_green">#80013806</color>
     <color name="cardview_background_color">#6638388B</color>
     <color name="searchbar_input_background_color">#332488CB</color>
     <color name="orange">#FFC107</color>
+    <color name="trans_orange">#36FFC107</color>
 </resources>

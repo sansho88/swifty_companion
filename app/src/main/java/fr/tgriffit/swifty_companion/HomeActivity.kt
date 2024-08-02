@@ -5,10 +5,14 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import fr.tgriffit.swifty_companion.data.model.SharedViewModel
 import android.os.Bundle
+import android.text.InputFilter
+import android.text.InputFilter.LengthFilter
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.Filter
 import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.Toast
@@ -22,6 +26,8 @@ import fr.tgriffit.swifty_companion.data.auth.Token
 import fr.tgriffit.swifty_companion.ui.main.SectionsPagerAdapter
 import fr.tgriffit.swifty_companion.databinding.ActivityHomeBinding
 import androidx.activity.viewModels
+import androidx.core.view.allViews
+import androidx.core.view.get
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
 import fr.tgriffit.swifty_companion.data.User
@@ -99,6 +105,11 @@ class HomeActivity : AppCompatActivity() {
 
         searchView = binding.searchUserSearchView
         var lastSearched: String = ""
+        val searchEditText = searchView.allViews.find { view -> view is EditText } as EditText
+        //set maxLength of login
+        searchEditText.filters = arrayOf<InputFilter>(LengthFilter(MAX_LOGIN_LEN))
+        searchEditText.textSize = 22f
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (!query.isNullOrEmpty() && lastSearched != query) {
@@ -115,8 +126,8 @@ class HomeActivity : AppCompatActivity() {
                         Log.d("HomeActivity", "onQueryTextSubmit: ${sharedViewModel.apiService.value?.lastResponseApi?.failure?.message}")
                         return false
                     }
-                    Log.d("HomeActivity", "result variable= ${sharedViewModel.result.value}")
                     sharedViewModel.setUser(user!!)
+                    Log.d("HomeActivity", "user variable= ${sharedViewModel.user.value}")
                     changeProjectsList(user!!.cursus_users)
                     searchView.clearFocus()
                 }
@@ -124,7 +135,9 @@ class HomeActivity : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText != null && newText.length > MAX_LOGIN_LEN)
+                if (newText.isNullOrEmpty()) return false
+
+                if ( newText.length > MAX_LOGIN_LEN)
                     Toast.makeText(
                         this@HomeActivity,
                         "A login can't be bigger",
@@ -184,10 +197,6 @@ class HomeActivity : AppCompatActivity() {
                 id: Long
             ) {
                 sharedViewModel.setCurrentCursus(cursusUserList[position])
-                Log.d(
-                    "ProjectFragment",
-                    "onItemSelected: ${sharedViewModel.user.value!!.getProjectsUsers()}"
-                )
                 val cursusProjects =
                     sharedViewModel.setProjectsList(
                         sharedViewModel.user.value!!.getProjectsUsers().filter { project ->
@@ -195,7 +204,6 @@ class HomeActivity : AppCompatActivity() {
                                 id == cursusUserList[position].cursus_id
                             } != null
                         })
-                Log.d("ProjectFragment", "current cursus: ${sharedViewModel.currentCursus.value}")
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}

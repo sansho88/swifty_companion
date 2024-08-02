@@ -211,7 +211,7 @@ open class UserData(
 
 
     public class Image(
-        val link: String,
+        val link: String?,
         val versions: Versions
     ) {
     }
@@ -337,12 +337,12 @@ open class UserData(
 
     open class CampusUser(
         val id: Int,
-        val userId: Int,
-        val campusId: Int,
-        val isPrimary: Boolean
+        val user_id: Int,
+        val campus_id: Int,
+        val is_primary: Boolean
     ){
         override fun toString(): String {
-            return "CampusUser(id=$id, userId=$userId, campusId=$campusId, isPrimary=$isPrimary)"
+            return "CampusUser(id=$id, userId=$user_id, campusId=$campus_id, isPrimary=$is_primary)"
         }
     }
 
