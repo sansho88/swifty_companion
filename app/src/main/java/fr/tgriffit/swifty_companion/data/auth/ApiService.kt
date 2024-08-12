@@ -107,7 +107,7 @@ class ApiService() : AuthParams() {
     }
 
     fun getAbout(info: String?): ResponseApi {
-        var result: ResponseApi = ResponseApi(code = 0, value = "")
+        var result = ResponseApi(code = 0, value = "")
         val executor = Executors.newSingleThreadExecutor() //for API calls!
 
         if (info.isNullOrEmpty())
@@ -151,10 +151,10 @@ class ApiService() : AuthParams() {
                         TAG, "[FAILURE] callApi: ${result.error.message}" +
                                 "\n=>${response.responseMessage}"
                     )
-                    if (response.statusCode == 401 && nbTries < 1) {
+                    //refresh automatically the user token once
+                    if (response.statusCode == 401 && nbTries++ < 1) {
                         refreshToken()
                         callApi(endPoint)
-                        ++nbTries
                     }
                     ResponseApi(code = response.statusCode, value = response.responseMessage)
                 }
@@ -205,9 +205,7 @@ class ApiService() : AuthParams() {
         var failure: Failure? = null
         var success: Success? = null
 
-        class Failure(code: Int, message: String) {
-            val code: Int = code
-            val message: String = message
+        class Failure(val code: Int, val message: String) {
         }
 
         class Success(val result: String) {
