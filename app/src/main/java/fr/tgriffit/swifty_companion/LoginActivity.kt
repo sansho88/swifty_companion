@@ -29,7 +29,6 @@ class LoginActivity: AppCompatActivity() {
         super.onResume()
         if (token == null)
         {
-            Log.d(TAG, "onResume: create new token")
             obtainsTokenWhenCodeReceived()
         }
     }
