@@ -2,23 +2,21 @@ package fr.tgriffit.swifty_companion.ui.main
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import fr.tgriffit.swifty_companion.data.model.SharedViewModel
-import fr.tgriffit.swifty_companion.databinding.FragmentSkillsBinding
 import com.github.mikephil.charting.charts.RadarChart
 import com.github.mikephil.charting.data.RadarData
 import com.github.mikephil.charting.data.RadarDataSet
 import com.github.mikephil.charting.data.RadarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
+import fr.tgriffit.swifty_companion.data.model.SharedViewModel
 import fr.tgriffit.swifty_companion.data.model.UserData
+import fr.tgriffit.swifty_companion.databinding.FragmentSkillsBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
@@ -37,17 +35,9 @@ class SkillsFragment : Fragment() {
 
     private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            /*  param1 = it.getString(ARG_PARAM1)
-              param2 = it.getString(ARG_PARAM2)*/
-        }
-    }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
 
         _binding = FragmentSkillsBinding.inflate(inflater, container, false)
@@ -57,8 +47,7 @@ class SkillsFragment : Fragment() {
         skills = sharedViewModel.currentCursus.value!!.skills
 
         setupRadarChart()
-        if (skills != null)
-            setData(skills!!)
+        if (skills != null) setData(skills!!)
 
         sharedViewModel.currentCursus.observe(viewLifecycleOwner) {
             if (skills != null) {
@@ -66,7 +55,6 @@ class SkillsFragment : Fragment() {
                 radarChart.notifyDataSetChanged()
             }
         }
-
         return root
     }
 
@@ -100,7 +88,7 @@ class SkillsFragment : Fragment() {
             entries.add(entry)
         }
         var sizeList = entries.size
-        while (sizeList < 3){
+        while (sizeList < 3) {
             val entry = RadarEntry(0f)
             entry.data = ""
             entry.icon = null
@@ -147,13 +135,6 @@ class SkillsFragment : Fragment() {
         yAxis.textColor = Color.WHITE
         yAxis.setDrawLabels(false)
 
-       /* val l = radarChart.legend
-        l.verticalAlignment = Legend.LegendVerticalAlignment.TOP
-        l.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
-        l.orientation = Legend.LegendOrientation.HORIZONTAL
-        l.setDrawInside(false)
-        l.textSize = 8f*/
-
     }
 
     companion object {
@@ -167,13 +148,12 @@ class SkillsFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            SkillsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+        fun newInstance(param1: String, param2: String) = SkillsFragment().apply {
+            arguments = Bundle().apply {
+                putString(ARG_PARAM1, param1)
+                putString(ARG_PARAM2, param2)
             }
+        }
     }
 
 

@@ -43,7 +43,7 @@
 
                 <data
                     android:host="callback"
-                    android:scheme="myapp" />
+                    android:scheme="swiftycompanion" />
             </intent-filter>
         </activity>
       

@@ -1,6 +1,5 @@
 package fr.tgriffit.swifty_companion.ui.main
 
-import fr.tgriffit.swifty_companion.data.model.SharedViewModel
 import android.content.res.Resources
 import android.graphics.Color
 import android.net.Uri
@@ -13,18 +12,17 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
+import fr.tgriffit.swifty_companion.R
 import fr.tgriffit.swifty_companion.data.User
+import fr.tgriffit.swifty_companion.data.auth.ApiService
+import fr.tgriffit.swifty_companion.data.model.SharedViewModel
 import fr.tgriffit.swifty_companion.databinding.UserProfileBinding
 import java.util.Locale
-import androidx.lifecycle.Observer
-import fr.tgriffit.swifty_companion.data.auth.ApiService
-
-import androidx.fragment.app.activityViewModels
-import fr.tgriffit.swifty_companion.R
-import okio.Path.Companion.toPath
 
 
 private const val TAG = "UserProfileActivity"
@@ -46,9 +44,6 @@ class UserProfileFragment : Fragment() {
     private lateinit var userCampus: TextView
     private var _binding: UserProfileBinding? = null
 
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
@@ -73,7 +68,6 @@ class UserProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         try {
             user = sharedViewModel.user.value
@@ -124,12 +118,10 @@ class UserProfileFragment : Fragment() {
         return true
     }
 
-
     private fun updateUserLevel(level: Double) {
         userLevel.text = String.format(Locale.US, "Lvl: %,.2f %%", level)
         userExpBar.progress = ((level - level.toInt()) * 100).toInt()
     }
-
 
     @NonNull
     private fun updateUserData(updatedUser: User = user!!) {

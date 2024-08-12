@@ -2,17 +2,12 @@ package fr.tgriffit.swifty_companion.ui.main
 
 import android.content.res.ColorStateList
 import android.text.format.DateFormat
-import android.util.Log
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.graphics.alpha
+import androidx.recyclerview.widget.RecyclerView
 import fr.tgriffit.swifty_companion.R
-import fr.tgriffit.swifty_companion.data.model.SharedViewModel
 import fr.tgriffit.swifty_companion.data.model.UserData
-
-import fr.tgriffit.swifty_companion.ui.main.placeholder.PlaceholderContent.ProjectItem
 import fr.tgriffit.swifty_companion.databinding.FragmentProjectBinding
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -20,14 +15,12 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 /**
- * [RecyclerView.Adapter] that can display a [ProjectItem].
+ * [RecyclerView.Adapter] that can display a [ProjectFragment].
  * TODO: Replace the implementation with code for your data type.
  */
 class MyProjectRecyclerViewAdapter(
     private val projectsList: List<UserData.ProjectsUsers>?
 ) : RecyclerView.Adapter<MyProjectRecyclerViewAdapter.ViewHolder>() {
-
-    private val sharedViewModel = SharedViewModel()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
@@ -44,7 +37,7 @@ class MyProjectRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = projectsList!![position]
         holder.nameView.text = item.project.name
-        var timeParsed: Long? = null
+        val timeParsed: Long?
         val startTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).parse(item.created_at)
         var finishedDate: String = ""
         val today = Date()

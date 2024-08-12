@@ -2,16 +2,14 @@ package fr.tgriffit.swifty_companion.ui.main
 
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import fr.tgriffit.swifty_companion.R
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import fr.tgriffit.swifty_companion.data.model.SharedViewModel
 import fr.tgriffit.swifty_companion.databinding.FragmentProjectListBinding
 import fr.tgriffit.swifty_companion.ui.main.UserProfileFragment.Companion.ARG_SECTION_NUMBER
@@ -45,9 +43,7 @@ class ProjectFragment : Fragment() {
             setIndex(arguments?.getInt(ARG_SECTION_NUMBER) ?: 2)
         }
         _binding = FragmentProjectListBinding.inflate(inflater, container, false)
-        val view = inflater.inflate(R.layout.fragment_project_list, container, false)
         val root = binding.root
-
 
         recyclerView = binding.list
         if (sharedViewModel.user.value != null && sharedViewModel.projectsList.value != null)
@@ -55,29 +51,19 @@ class ProjectFragment : Fragment() {
         adapter = MyProjectRecyclerViewAdapter(sharedViewModel.projectsList.value)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
-        Log.d("ProjectFragment", "current cursus: ${sharedViewModel.currentCursus.value}")
 
         sharedViewModel.projectsList.observe(viewLifecycleOwner, Observer {
-           // adapter.notifyDataSetChanged()
             adapter = MyProjectRecyclerViewAdapter(sharedViewModel.projectsList.value)
             recyclerView.adapter = adapter
-            Log.d("ProjectFragment", "projectsList changed")
-
         })
-
-
-
         return root
     }
 
 
-
     companion object {
 
-        // TODO: Customize parameter argument names
         const val ARG_COLUMN_COUNT = "column-count"
 
-        // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(columnCount: Int) =
             ProjectFragment().apply {

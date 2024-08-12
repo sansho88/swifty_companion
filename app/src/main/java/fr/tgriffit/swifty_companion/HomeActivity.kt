@@ -3,7 +3,6 @@ package fr.tgriffit.swifty_companion
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
-import fr.tgriffit.swifty_companion.data.model.SharedViewModel
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.InputFilter.LengthFilter
@@ -12,27 +11,26 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
-import android.widget.Filter
 import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.Toast
-import com.google.android.material.tabs.TabLayout
-import androidx.viewpager.widget.ViewPager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.IntentCompat
-import fr.tgriffit.swifty_companion.data.auth.ApiService
-import fr.tgriffit.swifty_companion.data.auth.Token
-import fr.tgriffit.swifty_companion.ui.main.SectionsPagerAdapter
-import fr.tgriffit.swifty_companion.databinding.ActivityHomeBinding
-import androidx.activity.viewModels
 import androidx.core.view.allViews
-import androidx.core.view.get
 import androidx.lifecycle.Observer
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import fr.tgriffit.swifty_companion.data.User
+import fr.tgriffit.swifty_companion.data.auth.ApiService
+import fr.tgriffit.swifty_companion.data.auth.Token
+import fr.tgriffit.swifty_companion.data.model.SharedViewModel
 import fr.tgriffit.swifty_companion.data.model.UserData
+import fr.tgriffit.swifty_companion.databinding.ActivityHomeBinding
 import fr.tgriffit.swifty_companion.ui.main.ProjectFragment
+import fr.tgriffit.swifty_companion.ui.main.SectionsPagerAdapter
 import fr.tgriffit.swifty_companion.ui.main.SkillsFragment
 import fr.tgriffit.swifty_companion.ui.main.UserProfileFragment
 
@@ -40,7 +38,6 @@ import fr.tgriffit.swifty_companion.ui.main.UserProfileFragment
 class HomeActivity : AppCompatActivity() {
     private val TAG = "HomeActivity"
     val MAX_LOGIN_LEN = 8
-    private val gson = Gson()
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var searchView: SearchView
@@ -48,8 +45,8 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var meButton: ImageButton
     private lateinit var logoutButton: ImageButton
     private var user: User? = null
-    lateinit var apiService: ApiService
-    var token: Token? = null
+    private lateinit var apiService: ApiService
+    private var token: Token? = null
     private val sharedViewModel: SharedViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,11 +76,17 @@ class HomeActivity : AppCompatActivity() {
             Toast.makeText(this, "Fetching data...", Toast.LENGTH_SHORT).show()
             val responseApi = sharedViewModel.apiService.value?.getAbout("me")
             if (responseApi?.success != null)
+            {
                 sharedViewModel.setResult(responseApi.success!!.result)
-            val me = sharedViewModel.getUserFromResult()
-            searchView.setQuery(me!!.getLogin(), true)
-            searchView.clearFocus()
-            searchView.setQuery("", false)
+                val me = sharedViewModel.getUserFromResult()
+                if (me == null)
+                    Toast.makeText(this, "Timeout\nPlease, check your connexion", Toast.LENGTH_LONG).show()
+                else{
+                    searchView.setQuery(me.getLogin(), true)
+                    searchView.clearFocus()
+                    searchView.setQuery("", false)
+                }
+            }
         }
         logoutButton.setOnClickListener {
             val loginIntent = Intent(this, LoginActivity::class.java)
@@ -104,7 +107,7 @@ class HomeActivity : AppCompatActivity() {
             token = IntentCompat.getParcelableExtra(intent, "token", Token::class.java)!!
 
         searchView = binding.searchUserSearchView
-        var lastSearched: String = ""
+        var lastSearched = ""
         val searchEditText = searchView.allViews.find { view -> view is EditText } as EditText
         //set maxLength of login
         searchEditText.filters = arrayOf<InputFilter>(LengthFilter(MAX_LOGIN_LEN))
@@ -169,9 +172,6 @@ class HomeActivity : AppCompatActivity() {
                     changeProjectsList(sharedViewModel.user.value!!.cursus_users)
                 } else
                     Log.e("HomeActivity", "onCreate: tmpUser is null")
-                val searchResult = sharedViewModel.performSearch()
-                /*if (searchResult?.failure != null)
-                    Toast.makeText(this, searchResult.failure!!.message, Toast.LENGTH_SHORT).show()*/
 
             } catch (e: Exception) {
                 Log.e(TAG, "onCreate: ApiService().getMe: ", e)
@@ -197,7 +197,6 @@ class HomeActivity : AppCompatActivity() {
                 id: Long
             ) {
                 sharedViewModel.setCurrentCursus(cursusUserList[position])
-                val cursusProjects =
                     sharedViewModel.setProjectsList(
                         sharedViewModel.user.value!!.getProjectsUsers().filter { project ->
                             project.cursus_ids.find { id ->

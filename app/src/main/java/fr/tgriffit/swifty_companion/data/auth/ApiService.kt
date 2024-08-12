@@ -4,13 +4,10 @@ import android.util.Log
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
-import com.google.android.gms.common.api.Response
 import com.google.gson.Gson
 import io.github.cdimascio.dotenv.dotenv
-import okhttp3.internal.notify
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import kotlin.Exception
 
 open class AuthParams() {
     private val dotenv = dotenv { //path to .env file: app/src/main/assets/env
@@ -23,7 +20,7 @@ open class AuthParams() {
 
 
     val redirectUri =
-        "myapp://callback/"//add your redirect uri ( https://www.oauth.com/oauth2-servers/redirect-uris/redirect-uris-native-apps/ )
+        "swiftycompanion://callback/"
     protected val get42TokenUrl = "https://api.intra.42.fr/oauth/token"
 
 }
@@ -66,8 +63,9 @@ class ApiService() : AuthParams() {
         this.token = token
     }
 
-    protected var TAG = "ApiService"
-    protected val requestApi42Url = "https://api.intra.42.fr/v2/"
+    private var TAG = "ApiService"
+    private val MAX_TIMEOUT = 42L
+    private val requestApi42Url = "https://api.intra.42.fr/v2/"
     val request = Request()
     private var token: Token? = null
     var lastResponseApi: ResponseApi? = null
@@ -118,7 +116,7 @@ class ApiService() : AuthParams() {
             result = callApi(info)
             executor.shutdown()
         }
-        if (executor.awaitTermination(10, TimeUnit.SECONDS)) //attention au reseau...
+        if (executor.awaitTermination(MAX_TIMEOUT, TimeUnit.SECONDS))
         {
             lastResponseApi = result
             return result
@@ -172,7 +170,7 @@ class ApiService() : AuthParams() {
         return "ApiService(TAG='$TAG', requestApi42Url='$requestApi42Url', request=$request, token=$token)"
     }
 
-    private fun refreshToken(){
+    private fun refreshToken() {
         val (_, _, result) = get42TokenUrl.httpPost(
             listOf(
                 "grant_type" to "refresh_token",
