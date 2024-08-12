@@ -87,6 +87,8 @@ class LoginActivity: AppCompatActivity() {
                     startActivity(homeIntent)
                     finish()
                 }
+                else
+                    Toast.makeText(this, "The app's token is expired", Toast.LENGTH_SHORT).show()
             }catch (exception: Exception){
                 Log.e(TAG, "Something with the API process had a malfunction:\n$exception")
             }

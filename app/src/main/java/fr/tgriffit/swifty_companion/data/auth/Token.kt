@@ -59,6 +59,10 @@ data class Token(
             return arrayOfNulls(size)
         }
 
+        /**
+         * Exchange the code for a token
+         * A 401 error is "thrown" when the app's token in the 42 API is expired.
+         */
         fun createTokenFromCode(code: String?): Token?{
             var token : Token ? = null
             if (!code.isNullOrEmpty()) {
