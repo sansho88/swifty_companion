@@ -57,39 +57,21 @@ Les infos necessaires peuvent etre trouvees, sur l'intranet 42, dans les paramet
 
 ## Dépendances externes
 
- 1. **AndroidX Core & AppCompat** :
+ 1. **AndroidX Core & AppCompat**
 
-    - `androidx.core:core-ktx`
-    - `androidx.appcompat:appcompat`
+ 2. **Material Design**
 
- 2. **Material Design** :
+ 3. **Constraint Layout**
 
-    - `com.google.android.material:material`
+ 4. **Annotation**
 
- 3. **Constraint Layout** :
+ 5. **Lifecycle Components**
 
-    - `androidx.constraintlayout:constraintlayout`
+ 6. **Google Play Services**
 
- 4. **Annotation** :
+ 7. **Gson (JSON Parsing)**
 
-    - `androidx.annotation:annotation`
-
- 5. **Lifecycle Components** :
-
-    - `androidx.lifecycle:lifecycle-livedata-ktx`
-    - `androidx.lifecycle:lifecycle-viewmodel-ktx`
-
- 6. **Google Play Services** :
-
-    - `com.google.android.gms:play-services-cronet`
-
- 7. **Gson (JSON Parsing)** :
-
-    - `com.google.code.gson:gson`
-
- 8. **Fuel (HTTP Networking)** :
-
-    - `com.github.kittinunf.fuel:fuel`
+ 8. **Fuel (HTTP Networking)**
 
  9. **Dotenv for Kotlin (Variables d'environnement)** :
 
