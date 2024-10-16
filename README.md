@@ -41,7 +41,9 @@ L'application propose une interface intuitive pour rechercher un utilisateur et 
 
 4. Synchronisez les dépendances et lancez l'application sur un émulateur ou un appareil physique :
 
-   \`\`
+   ```bash
+   ./gradlew build
+   ```
 
 ## Utilisation
 
