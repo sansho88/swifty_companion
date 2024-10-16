@@ -81,7 +81,15 @@ Les infos necessaires peuvent etre trouvees, sur l'intranet 42, dans les paramet
 
 12. **Glide (Image Loading)**
 
-13. \*\*Activity &
+13. **Activity & Fragment KTX**
+
+14. **Legacy Support Library**
+
+15. **RecyclerView**
+
+16. **MPAndroidChart (Charts & Graphs)**
+
+17. **JUnit & AndroidX Test Libraries**
 
 ## Ressources
 
