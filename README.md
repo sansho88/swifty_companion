@@ -33,13 +33,12 @@ Il est possible de rechercher rapidement un utilisateur et de consulter ses proj
 
 2. Ouvrez le projet dans **Android Studio**.
 
-3. Créez un fichier `env`  pour stocker vos informations confidentielles :
+3. Créez un fichier `env` (sans '.') pour stocker vos informations confidentielles :
 
 ```properties
 UID=
 SECRET=
-#rename into "env" without dot. ".env" will doesn't work.
-#Infos found on profile intra
+#Infos found on 42 intra profile settings
 ```
 
 4. Synchronisez les dépendances et lancez l'application sur un émulateur ou un appareil physique :
