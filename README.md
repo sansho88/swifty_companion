@@ -57,7 +57,7 @@ Les infos necessaires peuvent etre trouvees, sur l'intranet 42, dans les paramet
 
 ## Dépendances externes
 
- 1. **AndroidX Core & AppCompat**
+- **AndroidX Core & AppCompat**
 
  2. **Material Design**
 
