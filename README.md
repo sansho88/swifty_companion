@@ -55,7 +55,7 @@ Il est possible de rechercher rapidement un utilisateur et de consulter ses proj
 
 - **Retrofit** : pour les appels API réseau.
 - **Gson** : pour la sérialisation/désérialisation JSON.
-- **Picasso** : pour le chargement des images des profils.
+- **Glide** : pour le chargement des images des profils.
 
 ## Ressources
 
