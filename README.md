@@ -7,8 +7,7 @@
 
 ## Fonctionnalités
 
-- **Recherche d'utilisateur** : saisie semi-automatique à partir de trois lettres pour trouver un étudiant.
-- **Affichage des informations utilisateur** :
+- **Recherche d'utilisateur** : trouver un etudiant a condition de connaitre son login exact**Affichage des informations utilisateur** :
   - Login
   - Email et mobile
   - Niveau et localisation à 42
