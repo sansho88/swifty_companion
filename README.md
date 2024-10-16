@@ -2,7 +2,8 @@
 
 ## Description
 
-**Swifty Companion** est une application mobile Android développée en **Kotlin**. Elle permet de récupérer et d'afficher des informations sur les étudiants de l'école 42 via l'API de 42. L'application propose une interface intuitive pour rechercher un utilisateur et afficher ses détails, y compris ses projets, compétences, et informations personnelles.
+**Swifty Companion** est une application mobile Android développée en **Kotlin**. Elle permet de récupérer et d'afficher des informations sur les étudiants de l'école 42 via l'API de 42.\
+ L'application propose une interface intuitive pour rechercher un utilisateur et afficher ses détails, y compris ses projets, compétences, et informations personnelles.
 
 ## Fonctionnalités
 
