@@ -33,7 +33,7 @@ Il est possible de rechercher rapidement un utilisateur et de consulter ses proj
 
 2. Ouvrez le projet dans **Android Studio**.
 
-3. Créez un fichier `local.properties` pour stocker vos informations confidentielles :
+3. Créez un fichier `env` pour stocker vos informations confidentielles :
 
    ```properties
     API_UID=your_uid API_SECRET=your_secret
