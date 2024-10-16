@@ -48,7 +48,7 @@ L'application propose une interface intuitive pour rechercher un utilisateur et 
 ## Utilisation
 
 1. Ouvrez l'application.
-2. Recherchez un étudiant en entrant au moins trois lettres de son login.
+2. Recherchez un étudiant en entrant son login.
 3. Consultez les informations détaillées sur l'utilisateur, y compris ses projets et compétences.
 
 ## Dépendances
@@ -66,4 +66,4 @@ L'application propose une interface intuitive pour rechercher un utilisateur et 
 
 ## Auteur
 
-Projet réalisé par \[votre-nom\] dans le cadre du cursus 42.
+Projet réalisé par Thomas GRIFFITH dans le cadre du cursus 42.
