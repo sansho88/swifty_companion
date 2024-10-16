@@ -35,19 +35,13 @@ L'application propose une interface intuitive pour rechercher un utilisateur et 
 
 3. Créez un fichier `local.properties` pour stocker vos informations confidentielles :
 
-   Copier le code
-
-   `API_UID=your_uid API_SECRET=your_secret`
+   ```properties
+    API_UID=your_uid API_SECRET=your_secret
+   ```
 
 4. Synchronisez les dépendances et lancez l'application sur un émulateur ou un appareil physique :
 
-   ```
-   bash
-   ```
-
-   Copier le code
-
-   `./gradlew build`
+   \`\`
 
 ## Utilisation
 
