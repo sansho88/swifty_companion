@@ -55,11 +55,60 @@ Les infos necessaires peuvent etre trouvees, sur l'intranet 42, dans les paramet
 2. Recherchez un étudiant en entrant son login.
 3. Consultez les informations détaillées sur l'utilisateur, y compris ses projets et compétences.
 
-## Dépendances
+## Dépendances externes
 
-- **Retrofit** : pour les appels API réseau.
-- **Gson** : pour la sérialisation/désérialisation JSON.
-- **Glide** : pour le chargement des images des profils.
+ 1. **AndroidX Core & AppCompat** :
+
+    - `androidx.core:core-ktx`
+    - `androidx.appcompat:appcompat`
+
+ 2. **Material Design** :
+
+    - `com.google.android.material:material`
+
+ 3. **Constraint Layout** :
+
+    - `androidx.constraintlayout:constraintlayout`
+
+ 4. **Annotation** :
+
+    - `androidx.annotation:annotation`
+
+ 5. **Lifecycle Components** :
+
+    - `androidx.lifecycle:lifecycle-livedata-ktx`
+    - `androidx.lifecycle:lifecycle-viewmodel-ktx`
+
+ 6. **Google Play Services** :
+
+    - `com.google.android.gms:play-services-cronet`
+
+ 7. **Gson (JSON Parsing)** :
+
+    - `com.google.code.gson:gson`
+
+ 8. **Fuel (HTTP Networking)** :
+
+    - `com.github.kittinunf.fuel:fuel`
+
+ 9. **Dotenv for Kotlin (Variables d'environnement)** :
+
+    - `io.github.cdimascio:dotenv-kotlin`
+
+10. **MockWebServer (Tests HTTP)** :
+
+    - `com.squareup.okhttp3:mockwebserver`
+
+11. **Kotlin Coroutines** :
+
+    - `org.jetbrains.kotlinx:kotlinx-coroutines-core`
+    - `org.jetbrains.kotlinx:kotlinx-coroutines-android`
+
+12. **Glide (Image Loading)** :
+
+    - `com.github.bumptech.glide:glide`
+
+13. \*\*Activity &
 
 ## Ressources
 
