@@ -59,37 +59,37 @@ Les infos necessaires peuvent etre trouvees, sur l'intranet 42, dans les paramet
 
 - **AndroidX Core & AppCompat**
 
- 2. **Material Design**
+- **Material Design**
 
- 3. **Constraint Layout**
+- **Constraint Layout**
 
- 4. **Annotation**
+- **Annotation**
 
- 5. **Lifecycle Components**
+- **Lifecycle Components**
 
- 6. **Google Play Services**
+- **Google Play Services**
 
- 7. **Gson (JSON Parsing)**
+- **Gson (JSON Parsing)**
 
- 8. **Fuel (HTTP Networking)**
+- **Fuel (HTTP Networking)**
 
- 9. **Dotenv for Kotlin (Variables d'environnement)**
+- **Dotenv for Kotlin (Variables d'environnement)**
 
-10. **MockWebServer (Tests HTTP)**
+- **MockWebServer (Tests HTTP)**
 
-11. **Kotlin Coroutines**
+- **Kotlin Coroutines**
 
-12. **Glide (Image Loading)**
+- **Glide (Image Loading)**
 
-13. **Activity & Fragment KTX**
+- **Activity & Fragment KTX**
 
-14. **Legacy Support Library**
+- **Legacy Support Library**
 
-15. **RecyclerView**
+- **RecyclerView**
 
-16. **MPAndroidChart (Charts & Graphs)**
+- **MPAndroidChart (Charts & Graphs)**
 
-17. **JUnit & AndroidX Test Libraries**
+- **JUnit & AndroidX Test Libraries**
 
 ## Ressources
 
