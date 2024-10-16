@@ -33,8 +33,7 @@ Il est possible de rechercher rapidement un utilisateur et de consulter ses proj
 
 2. Ouvrez le projet dans **Android Studio**.
 
-3. Créez un fichier `env` (sans '.') dans le chemin: 'swifty_companion/app/src/main/assets
-   /'
+3. Créez un fichier `env` (sans '.') dans le chemin: 'swifty_companion/app/src/main/assets/'
    Il doit contenir vos informations confidentielles :
 
 ```properties
