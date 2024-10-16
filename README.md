@@ -38,8 +38,9 @@ Il est possible de rechercher rapidement un utilisateur et de consulter ses proj
 ```properties
 UID=
 SECRET=
-#Infos found on 42 intra profile settings
 ```
+
+Les infos necessaires peuvent etre trouvees dans les parametres du profile sur l'intranet 42
 
 4. Synchronisez les dépendances et lancez l'application sur un émulateur ou un appareil physique :
 
