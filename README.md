@@ -21,7 +21,7 @@
 
 - Un compte 42 avec un **API UID et un Secret** (pour l'authentification OAuth2).
 - Environnement de développement Android (Android Studio).
-- Version récente de l'API 42.
+- Version 2 de l'API 42 (la plus recente a ce moment).
 
 ## Installation
 
