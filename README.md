@@ -27,12 +27,12 @@ L'application propose une interface intuitive pour rechercher un utilisateur et 
 
 1. Clonez le dépôt Git :
 
-   ```
-   bash
+   ```bash
+   git clone https://github.com/sansho88/swifty_companion.git
    ```
 
-   `git clone https://github.com/sansho88/swifty_companion.git`
 2. Ouvrez le projet dans **Android Studio**.
+
 3. Créez un fichier `local.properties` pour stocker vos informations confidentielles :
 
    ```
@@ -42,6 +42,7 @@ L'application propose une interface intuitive pour rechercher un utilisateur et 
    Copier le code
 
    `API_UID=your_uid API_SECRET=your_secret`
+
 4. Synchronisez les dépendances et lancez l'application sur un émulateur ou un appareil physique :
 
    ```
