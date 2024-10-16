@@ -73,22 +73,13 @@ Les infos necessaires peuvent etre trouvees, sur l'intranet 42, dans les paramet
 
  8. **Fuel (HTTP Networking)**
 
- 9. **Dotenv for Kotlin (Variables d'environnement)** :
+ 9. **Dotenv for Kotlin (Variables d'environnement)**
 
-    - `io.github.cdimascio:dotenv-kotlin`
+10. **MockWebServer (Tests HTTP)**
 
-10. **MockWebServer (Tests HTTP)** :
+11. **Kotlin Coroutines**
 
-    - `com.squareup.okhttp3:mockwebserver`
-
-11. **Kotlin Coroutines** :
-
-    - `org.jetbrains.kotlinx:kotlinx-coroutines-core`
-    - `org.jetbrains.kotlinx:kotlinx-coroutines-android`
-
-12. **Glide (Image Loading)** :
-
-    - `com.github.bumptech.glide:glide`
+12. **Glide (Image Loading)**
 
 13. \*\*Activity &
 
