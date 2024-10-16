@@ -7,14 +7,13 @@
 
 ## Fonctionnalités
 
-- **Recherche d'utilisateur** : trouver un etudiant a condition de connaitre son login exact**Affichage des informations utilisateur** :
+- **Recherche d'utilisateur** : trouver un etudiant via son login
+- **Affichage des informations utilisateur** :
   - Login
   - Email et mobile
   - Niveau et localisation à 42
-  - Coalition
   - Projets effectués (réussis et échoués)
   - Compétences et pourcentage
-  - Réalisations (Achievements)
 - **Navigation fluide** entre les vues principales.
 - **Gestion des erreurs** : connexion échouée, utilisateur non trouvé, problèmes réseau, etc.
 
