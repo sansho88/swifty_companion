@@ -40,7 +40,7 @@ UID=
 SECRET=
 ```
 
-Les infos necessaires peuvent etre trouvees dans les parametres du profile sur l'intranet 42
+Les infos necessaires peuvent etre trouvees, sur l'intranet 42 dans les parametres du profil
 
 4. Synchronisez les dépendances et lancez l'application sur un émulateur ou un appareil physique :
 
