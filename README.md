@@ -35,10 +35,6 @@ L'application propose une interface intuitive pour rechercher un utilisateur et 
 
 3. Créez un fichier `local.properties` pour stocker vos informations confidentielles :
 
-   ```
-   properties
-   ```
-
    Copier le code
 
    `API_UID=your_uid API_SECRET=your_secret`
